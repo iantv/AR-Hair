@@ -1,0 +1,6 @@
+*.vcxproj*
+.vs
+*.sln
+VirtualHairStyle/Debug/
+VirtualHairStyle.VC.*
+Debug/
