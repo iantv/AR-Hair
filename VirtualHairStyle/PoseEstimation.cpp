@@ -178,8 +178,12 @@ void detect2dpoints(Mat im)
 	if (count == 3) {
 		solvePnPMethod = CV_P3P;
 	}
-	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_EPNP))
+	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, solvePnPMethod)) {
 		cout << "ok!";
+	} else {
+		cv::imshow("Output", im);
+		return;
+	}
 
 	// Project a 3D point (0, 0, 1000.0) onto the image plane.
 	// We use this to draw a line sticking out of the nose
