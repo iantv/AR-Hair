@@ -203,31 +203,7 @@ void detect2dpoints(Mat im)
 
 	// Display image.
 	cv::imshow("Output", im);
-	//cv::waitKey(0);
 }
-
-std::vector<CvPoint2D32f> projectedPoints;
-
-CvPOSITObject *InitPOSIT(std::vector<CvPoint3D32f> &modelPoints) {
-	modelPoints.push_back(cvPoint3D32f(0.0f, 0.0f, 0.0f));
-	modelPoints.push_back(cvPoint3D32f(-225.0f, 170.0f, -135.0f));
-	modelPoints.push_back(cvPoint3D32f(225.0f, 170.0f, -135.0f));
-	modelPoints.push_back(cvPoint3D32f(0.0f, -150.0f, -125.0f));
-
-	CvPOSITObject *positObject = cvCreatePOSITObject(&modelPoints[0], static_cast<int>(modelPoints.size()));
-
-
-	return positObject;
-}
-
-void ProjectModelPoints(float *pose, vector<CvPoint2D32f> &projection_points, vector<CvPoint2D32f> &modelPoints) {
-	for (int p = 0; p < modelPoints.size(); p++) {
-		float modelPoint[] = { modelPoints[p].x, modelPoints[p].y, modelPoints[p].x, 1.0f };
-		CvMat modelMatrix = cvMat(4, 4, CV_32F, modelPoint);
-		//CvMat 
-	}
-}
-
 
 
 
