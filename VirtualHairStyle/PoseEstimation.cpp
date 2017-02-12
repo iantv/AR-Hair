@@ -94,7 +94,6 @@ void detect2dpoints(Mat im)
 	face_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, Size(im.rows / 5.0, im.rows / 5.0));
 	found_point[NOSE] = found_point[LEFTEYE] = found_point[RIGHTEYE] = found_point[MOUTH] = false;
 	for (size_t i = 0; i < faces.size(); i++) {
-		//Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
 		rectangle(im, faces[i], Scalar(255, 0, 255), 2);
 		Mat faceROI = frame_gray(faces[i]);
 
