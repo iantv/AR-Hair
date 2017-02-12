@@ -190,16 +190,25 @@ void detect2dpoints(Mat im)
 
 	vector<Point3d> nose_end_point3D;
 	vector<Point2d> nose_end_point2D;
-	nose_end_point3D.push_back(Point3d(0, 0, 200.0));
-	nose_end_point3D.push_back(Point3d(200.0, 0, 0));
-	nose_end_point3D.push_back(Point3d(0, 200.0, 0));
+	
+	double length = 500.0;
+	nose_end_point3D.push_back(Point3d(length, 0, 0));
+	nose_end_point3D.push_back(Point3d(-length, 0, 0));
+	nose_end_point3D.push_back(Point3d(0, length, 0));
+	nose_end_point3D.push_back(Point3d(0, -length, 0));
+	nose_end_point3D.push_back(Point3d(0, 0, length));
+	nose_end_point3D.push_back(Point3d(0, 0, -length));
 
 	projectPoints(nose_end_point3D, rotation_vector, translation_vector, camera_matrix, dist_coeffs, nose_end_point2D);
 
-	cv::line(im, image_points[0], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2);
-	cv::line(im, image_points[0], nose_end_point2D[1], cv::Scalar(0, 255, 0), 2);
-	cv::line(im, image_points[0], nose_end_point2D[2], cv::Scalar(0, 0, 255), 2); // y
-
+	cv::line(im, image_points[NOSE], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2);
+	cv::line(im, image_points[NOSE], nose_end_point2D[2], cv::Scalar(0, 255, 0), 2);
+	cv::line(im, image_points[NOSE], nose_end_point2D[4], cv::Scalar(0, 0, 255), 2); // z
+	/*
+	cv::line(im, nose_end_point2D[0], nose_end_point2D[1], cv::Scalar(255, 0, 0), 2);
+	cv::line(im, nose_end_point2D[2], nose_end_point2D[3], cv::Scalar(0, 255, 0), 2);
+	cv::line(im, nose_end_point2D[4], nose_end_point2D[5], cv::Scalar(0, 0, 255), 2); // z
+	*/
 	cout << "Rotation Vector " << endl << rotation_vector << endl;
 	cout << "Translation Vector" << endl << translation_vector << endl;
 
