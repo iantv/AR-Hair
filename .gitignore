@@ -3,4 +3,5 @@
 *.sln
 VirtualHairStyle/Debug/
 VirtualHairStyle.VC.*
+VirtualHairStyle/haarcascades*
 Debug/
