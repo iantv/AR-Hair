@@ -126,8 +126,7 @@ void detect2dpoints(Mat im)
 		}
 
 		vector<Rect> mouths;
-		mouth_cascade.detectMultiScale(faceROI, mouths, 1.4, 6, 0 | CV_HAAR_SCALE_IMAGE,
-			Size(faces[i].width*0.3, faces[i].height*0.2), Size(faces[i].width*0.4, faces[i].height*0.3));
+		mouth_cascade.detectMultiScale(faceROI, mouths, 1.4, 6, 0 | CASCADE_SCALE_IMAGE);			
 
 		if (mouths.size() && mouths[0].y > faces[i].height * 0.5) {
 			found_point[MOUTH] = true;
