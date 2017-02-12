@@ -91,9 +91,7 @@ void detect2dpoints(Mat im)
 	Mat frame_gray;
 
 	cvtColor(im, frame_gray, CV_BGR2GRAY);
-	equalizeHist(frame_gray, frame_gray);
-	face_cascade.detectMultiScale(frame_gray, faces, 1.5, 6, 0 | CV_HAAR_SCALE_IMAGE, Size(100, 100)/*, Size(300, 300)*/);
-
+	face_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, Size(im.rows / 5.0, im.rows / 5.0));
 	found_point[NOSE] = found_point[LEFTEYE] = found_point[RIGHTEYE] = found_point[MOUTH] = false;
 	for (size_t i = 0; i < faces.size(); i++) {
 		//Point center(faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5);
