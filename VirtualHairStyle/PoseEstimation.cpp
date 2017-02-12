@@ -107,18 +107,10 @@ void detect2dpoints(Mat im)
 
 		vector<Rect> eyes;
 		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 3, 0 | CASCADE_SCALE_IMAGE);
-
-		if (eyes.size() > 0) {
-			add_eye_point(im, faces[i], eyes[0], image_points, Scalar(0, 255, 0));
-			if (eyes.size() > 1) {
-				add_eye_point(im, faces[i], eyes[1], image_points, Scalar(0, 255, 0));
-			}
-		}
-		if (!found_point[LEFTEYE]) {
-			//draw_point(im, image_points[LEFTEYE], Scalar(0, 255, 0));
-		}
-		if (!found_point[RIGHTEYE]) {
-			//draw_point(im, image_points[RIGHTEYE], Scalar(0, 255, 0));
+					
+		for (size_t j = 0; j < eyes.size(); j++) {
+			if (found_point[LEFTEYE] && found_point[RIGHTEYE]) break;
+			add_eye_point(im, faces[i], eyes[j], image_points);
 		}
 
 		vector<Rect> mouths;
