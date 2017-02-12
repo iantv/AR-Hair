@@ -174,11 +174,7 @@ void detect2dpoints(Mat im)
 	cv::Mat translation_vector;
 
 	// Solve for pose
-	int solvePnPMethod = CV_ITERATIVE; 
-	if (count == 3) {
-		solvePnPMethod = CV_P3P;
-	}
-	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, solvePnPMethod)) {
+	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
 		cout << "ok!";
 	} else {
 		cv::imshow("Output", im);
