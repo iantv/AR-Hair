@@ -115,15 +115,14 @@ void detect2dpoints(Mat im)
 
 		vector<Rect> mouths;
 		mouth_cascade.detectMultiScale(faceROI, mouths, 1.4, 6, 0 | CASCADE_SCALE_IMAGE);			
-
-		if (mouths.size() && mouths[0].y > faces[i].height * 0.5) {
-			found_point[MOUTH] = true;
-			add_best_point(MOUTH, im, faces[i], mouths[0], image_points, Scalar(0, 255, 255));
+		for (size_t j = 0; j < mouths.size(); j++) {
+			if (mouths[j].y + mouths[j].height*0.5 > faces[i].height * 0.5) {
+				found_point[MOUTH] = true;
+				add_best_point(MOUTH, im, faces[i], mouths[j], image_points, Scalar(0, 255, 255));
+				break;
+			}
 		}
-		else {
-			//draw_point(im, image_points[MOUTH], Scalar(0, 255, 255));
-		}
-
+		
 		break;
 	}
 
