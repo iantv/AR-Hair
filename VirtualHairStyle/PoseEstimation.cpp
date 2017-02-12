@@ -34,7 +34,8 @@ CascadeClassifier nose_cascade;
 CascadeClassifier eyepair_big_cascade;
 CascadeClassifier mouth_cascade;
 
-int load_cascades() {
+int load_cascades()
+{
 	if (!face_cascade.load(face_cascade_name)) { printf("--(!)Error loading\n"); return -1; };
 	if (!eyes_cascade.load(eyes_cascade_name)) { printf("--(!)Error loading\n"); return -1; };
 	if (!nose_cascade.load(nose_cascade_name)) { printf("--(!)Error loading\n"); return -1; };
@@ -44,17 +45,19 @@ int load_cascades() {
 	if (!mouth_cascade.load(mouth_cascade_name)) { printf("--(!)Error loading\n"); return -1; };
 }
 
-static void draw_point(cv::Mat im, cv::Point2d point, Scalar color) { /* Temp function */
-	circle(im, point, 3, color, -1);
+static void draw_point(cv::Mat im, cv::Point2d point, Scalar color)
+{ /* Temp function */
 }
 
-cv::Point2d get_center_point(Rect face, Rect candidate) {
+cv::Point2d get_center_point(Rect face, Rect candidate)
+{
 	return cv::Point2d(face.x + candidate.x + candidate.width*0.5,
 		face.y + candidate.y + candidate.height*0.5);
 }
 
 static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect face, Rect obj,
-	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0)) {
+	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0))
+{
 	cv::Point2d center = get_center_point(face, obj);
 	image_points[obj_as_idx] = center;
 	draw_point(im, center, color);
@@ -65,12 +68,13 @@ static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect face, Rec
 std::vector<cv::Point2d> image_points(N_POINTS);
 static std::vector<bool> found_point(N_POINTS);
 
-bool is_left_eye(Rect eye, Rect face) {
+bool is_left_eye(Rect eye, Rect face)
+{
 	return eye.x + eye.width*0.5 < face.width*0.5;
 }
 
-void add_eye_point(cv::Mat im, Rect face, Rect eye,
-	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0)) {
+void add_eye_point(cv::Mat im, Rect face, Rect eye, vector<cv::Point2d> &image_points)
+{
 	if (eye.y + eye.height*0.5 > face.height * 0.5) return; 
 	if (is_left_eye(eye, face) && !found_point[LEFTEYE]) {
 		found_point[LEFTEYE] = true;
@@ -81,8 +85,9 @@ void add_eye_point(cv::Mat im, Rect face, Rect eye,
 	}
 }
 
-void detect2dpoints(Mat im) {
-	std::vector<Rect> faces;
+void detect2dpoints(Mat im)
+{
+	vector<Rect> faces;
 	Mat frame_gray;
 
 	cvtColor(im, frame_gray, CV_BGR2GRAY);
