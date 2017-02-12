@@ -110,8 +110,7 @@ void detect2dpoints(Mat im)
 		}
 
 		vector<Rect> eyes;
-		eyes_cascade.detectMultiScale(faceROI, eyes, 1.4, 6, 0 | CV_HAAR_SCALE_IMAGE,
-			Size(faces[i].width*0.2, faces[i].height*0.2), Size(faces[i].width*0.3, faces[i].height*0.3));
+		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 3, 0 | CASCADE_SCALE_IMAGE);
 
 		if (eyes.size() > 0) {
 			add_eye_point(im, faces[i], eyes[0], image_points, Scalar(0, 255, 0));
