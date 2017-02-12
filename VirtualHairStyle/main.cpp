@@ -18,7 +18,6 @@ int main(int argc, const char** argv) {
 	capture.set(CV_CAP_PROP_POS_MSEC, 102000);*/
 
 	if (capture.isOpened()) {
-		//bool r = capture.read(frame);
 		while (capture.read(frame)) {
 			flip(frame, frame, 1);
 			if (!frame.empty()) {
