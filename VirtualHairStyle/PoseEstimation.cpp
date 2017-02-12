@@ -65,8 +65,8 @@ static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect face, Rec
 
 #define N_POINTS 4
 
-std::vector<cv::Point2d> image_points(N_POINTS);
-static std::vector<bool> found_point(N_POINTS);
+vector<cv::Point2d> image_points(N_POINTS);
+static vector<bool> found_point(N_POINTS);
 
 bool is_left_eye(Rect eye, Rect face)
 {
