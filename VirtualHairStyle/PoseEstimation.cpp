@@ -130,20 +130,24 @@ void detect2dpoints(Mat im)
 	std::vector<cv::Point3d> model_points;
 	std::vector<cv::Point2d> img_points_new;
 	if (found_point[NOSE]) {
-		model_points.push_back(cv::Point3d(0.0f, 0.0f, 0.0f));               // Nose tip
+		model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f));
+		//model_points.push_back(cv::Point3d(0.0f, 0.0f, 0.0f));               // Nose tip
 		img_points_new.push_back(image_points[NOSE]);
 	}
 	//model_points.push_back(cv::Point3d(0.0f, -330.0f, -65.0f));          // Chin
 	if (found_point[LEFTEYE]) {
-		model_points.push_back(cv::Point3d(-225.0f, 170.0f, -135.0f));       // Left eye left corner
+		model_points.push_back(Point3f(-36.9522f, 39.3518f, 47.1217f));
+		//model_points.push_back(cv::Point3d(-225.0f, 170.0f, -135.0f));       // Left eye left corner
 		img_points_new.push_back(image_points[LEFTEYE]);
 	}
 	if (found_point[RIGHTEYE]) {
-		model_points.push_back(cv::Point3d(225.0f, 170.0f, -135.0f));        // Right eye right corner
+		model_points.push_back(Point3f(35.446f, 38.4345f, 47.6468f));
+		//model_points.push_back(cv::Point3d(225.0f, 170.0f, -135.0f));        // Right eye right corner
 		img_points_new.push_back(image_points[RIGHTEYE]);
 	}
 	if (found_point[MOUTH]) {
-		model_points.push_back(cv::Point3d(0.0f, -150.0f, -125.0f));      // Mouth
+		model_points.push_back(Point3f(-0.0697709f, -29.2935f, 72.7329f));
+		//model_points.push_back(cv::Point3d(0.0f, -150.0f, -125.0f));      // Mouth
 		img_points_new.push_back(image_points[MOUTH]);
 	}
 									//model_points.push_back(cv::Point3d(-150.0f, -150.0f, -125.0f));      // Left Mouth corner
