@@ -125,12 +125,7 @@ void detect2dpoints(Mat im)
 		
 		break;
 	}
-
-	/*if (!found_point[NOSE] || !found_point[LEFTEYE] || !found_point[RIGHTEYE] || !found_point[MOUTH]) {
-		cv::imshow("Output", im);
-		return;
-	}*/
-
+	
 	// 3D model points.
 	std::vector<cv::Point3d> model_points;
 	std::vector<cv::Point2d> img_points_new;
