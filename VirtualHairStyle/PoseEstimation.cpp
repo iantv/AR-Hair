@@ -156,7 +156,7 @@ void detect2dpoints(Mat im)
 	cv::imshow("Output", im);
 	return;
 	//
-	if (count < 3) {
+	if (count < 4) {
 		cv::imshow("Output", im);
 		return;
 	}
