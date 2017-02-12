@@ -14,8 +14,8 @@ int main(int argc, const char** argv) {
 	if (load_cascades() == -1) return -1;
 
 	capture.open(0);
-	/*capture.open("C:/Users/iantv/Downloads/Video/linfina.mp4");
-	capture.set(CV_CAP_PROP_POS_MSEC, 5500);*/
+	/*capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
+	capture.set(CV_CAP_PROP_POS_MSEC, 102000);*/
 
 	if (capture.isOpened()) {
 		//bool r = capture.read(frame);
