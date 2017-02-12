@@ -72,11 +72,10 @@ bool is_left_eye(Rect eye, Rect face) {
 void add_eye_point(cv::Mat im, Rect face, Rect eye,
 	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0)) {
 	if (eye.y > face.height * 0.5) return;
-	if (is_left_eye(eye, face)) {
+	if (is_left_eye(eye, face) && !found_point[LEFTEYE]) {
 		found_point[LEFTEYE] = true;
-		add_best_point(LEFTEYE, im, face, eye, image_points, Scalar(0, 255, 0));
-	}
-	else {
+		add_best_point(LEFTEYE, im, face, eye, image_points, Scalar(255, 255, 0));
+	} else if (!is_left_eye(eye, face) && !found_point[RIGHTEYE]){
 		found_point[RIGHTEYE] = true;
 		add_best_point(RIGHTEYE, im, face, eye, image_points, Scalar(0, 255, 0));
 	}
