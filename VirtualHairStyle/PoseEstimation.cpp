@@ -18,12 +18,12 @@ enum face_objects_t { NOSE, LEFTEYE, RIGHTEYE, MOUTH };
 using namespace cv;
 using namespace std;
 
-String face_cascade_name = "haarcascades/haarcascade_frontalface_default.xml";
+String face_cascade_name = "haarcascades/haarcascade_frontalface_alt.xml";
 String eyes_cascade_name = "haarcascades/haarcascade_eye_tree_eyeglasses.xml";
 String nose_cascade_name = "haarcascades/haarcascade_mcs_nose.xml";
 String lefteye_cascade_name = "haarcascades/haarcascade_mcs_lefteye.xml";
 String righteye_cascade_name = "haarcascades/haarcascade_mcs_righteye.xml";
-String eyepair_big_cascade_name = "haarcascades/haarcascade_mcs_eyepair_big.xml";
+String eyepair_big_cascade_name = "haarcascades/haarcascade_eye.xml";
 String mouth_cascade_name = "haarcascades/haarcascade_mcs_mouth.xml";
 
 CascadeClassifier face_cascade;
