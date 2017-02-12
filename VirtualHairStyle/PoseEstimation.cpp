@@ -99,8 +99,8 @@ void detect2dpoints(Mat im)
 		Mat faceROI = frame_gray(faces[i]);
 
 		vector<Rect> nose;
-		nose_cascade.detectMultiScale(faceROI, nose, 1.4, 6, 0 | CV_HAAR_SCALE_IMAGE,
-			Size(faces[i].width*0.2, faces[i].height*0.2), Size(faces[i].width*0.3, faces[i].height*0.3));
+		nose_cascade.detectMultiScale(faceROI, nose, 1.1, 3, 0 | CASCADE_SCALE_IMAGE,
+			Size(faces[i].width*0.15, faces[i].height*0.15), Size(faces[i].width*0.3, faces[i].height*0.3));
 		if (nose.size()) {
 			add_best_point(NOSE, im, faces[i], nose[0], image_points);
 			found_point[NOSE] = true;
