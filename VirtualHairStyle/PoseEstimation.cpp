@@ -104,9 +104,6 @@ void detect2dpoints(Mat im)
 			add_best_point(NOSE, im, faces[i], nose[0], image_points);
 			found_point[NOSE] = true;
 		}
-		else {
-			//draw_point(im, image_points[NOSE], Scalar(255, 0, 0));
-		}
 
 		vector<Rect> eyes;
 		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 3, 0 | CASCADE_SCALE_IMAGE);
