@@ -47,6 +47,7 @@ int load_cascades()
 
 static void draw_point(cv::Mat im, cv::Point2d point, Scalar color)
 { /* Temp function */
+	circle(im, point, 3, color, -1);
 }
 
 cv::Point2d get_center_point(Rect face, Rect candidate)
