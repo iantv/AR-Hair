@@ -1,25 +1,16 @@
-#include <opencv2/opencv.hpp>
-#include <opencv2/objdetect.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv/cxcore.h>
-
+#include "PoseEstimation.h"
 #include <Windows.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
 
-//#include "OGL_OCV_common.h"
 #define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
 #include <stdio.h>
 #include <iostream>
 
 enum face_objects_t { NOSE, LEFTEYE, RIGHTEYE, MOUTH };
 
-using namespace cv;
 using namespace std;
 
 String face_cascade_name = "haarcascades/haarcascade_frontalface_alt.xml";
-String eyes_cascade_name = "haarcascades/haarcascade_eye_tree_eyeglasses.xml";
+String eyes_cascade_name = "haarcascades/haarcascade_eye.xml";
 String nose_cascade_name = "haarcascades/haarcascade_mcs_nose.xml";
 String lefteye_cascade_name = "haarcascades/haarcascade_mcs_lefteye.xml";
 String righteye_cascade_name = "haarcascades/haarcascade_mcs_righteye.xml";
@@ -74,15 +65,49 @@ bool is_left_eye(Rect eye, Rect face)
 	return eye.x + eye.width*0.5 < face.width*0.5;
 }
 
+Ptr<Tracker> faceTracker;
+Rect2d faceRect;
+bool isDetectedFace = false;
+
+Ptr<Tracker> noseTracker;
+Rect2d noseRect;
+bool isDetectedNose = false;
+
+Ptr<Tracker> leftEyeTracker;
+Rect2d leftEyeRect;
+bool isDetectedLeftEye = false;
+
+Ptr<Tracker> rightEyeTracker;
+Rect2d rightEyeRect;
+bool isDetectedRightEye = false;
+
+Ptr<Tracker> mouthTracker;
+Rect2d mouthRect;
+bool isDetectedMouth = false;
+
+bool isDetectedEyes = false;
+
+void calcMatrix(Mat im);
+
 void add_eye_point(cv::Mat im, Rect face, Rect eye, vector<cv::Point2d> &image_points)
 {
-	if (eye.y + eye.height*0.5 > face.height * 0.5) return; 
+	if (eye.y + eye.height*0.5 > face.height * 0.5) return;
 	if (is_left_eye(eye, face) && !found_point[LEFTEYE]) {
 		found_point[LEFTEYE] = true;
-		add_best_point(LEFTEYE, im, face, eye, image_points, Scalar(255, 255, 0));
-	} else if (!is_left_eye(eye, face) && !found_point[RIGHTEYE]){
+		//add_best_point(LEFTEYE, im, face, eye, image_points, Scalar(255, 255, 0));
+
+		isDetectedLeftEye = true;
+		leftEyeRect = eye;
+		leftEyeTracker->init(im, leftEyeRect);
+		add_best_point(LEFTEYE, im, face, leftEyeRect, image_points, Scalar(255, 255, 0));
+	} else if (!is_left_eye(eye, face) && !found_point[RIGHTEYE]) {
 		found_point[RIGHTEYE] = true;
-		add_best_point(RIGHTEYE, im, face, eye, image_points, Scalar(0, 255, 0));
+		//add_best_point(RIGHTEYE, im, face, eye, image_points, Scalar(0, 255, 0));
+
+		isDetectedRightEye = true;
+		rightEyeRect = eye;
+		rightEyeTracker->init(im, rightEyeRect);
+		add_best_point(RIGHTEYE, im, face, rightEyeRect, image_points, Scalar(0, 255, 0));
 	}
 }
 
@@ -90,43 +115,81 @@ void detect2dpoints(Mat im)
 {
 	vector<Rect> faces;
 	Mat frame_gray;
-
-	cvtColor(im, frame_gray, CV_BGR2GRAY);
-	face_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, Size(im.rows / 5.0, im.rows / 5.0));
+	Mat faceROI;
+	if (!isDetectedFace) {
+		cvtColor(im, frame_gray, CV_BGR2GRAY);
+		face_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, Size(im.rows / 5.0, im.rows / 5.0));
+		if (faces.size() == 0) {
+			cv::imshow("Output", im);
+			return;
+		} else {
+			isDetectedFace = true;
+			faceRect = faces[0];
+			faceTracker->init(im, faceRect);
+   			rectangle(im, faceRect, Scalar(255, 0, 255), 2);
+			faceROI = frame_gray(faceRect);
+		}
+	} else {
+		faceTracker->update(im, faceRect);
+		rectangle(im, faceRect, Scalar(255, 0, 255), 2);
+	}
 	found_point[NOSE] = found_point[LEFTEYE] = found_point[RIGHTEYE] = found_point[MOUTH] = false;
-	for (size_t i = 0; i < faces.size(); i++) {
-		rectangle(im, faces[i], Scalar(255, 0, 255), 2);
-		Mat faceROI = frame_gray(faces[i]);
-
+	
+	if (!isDetectedNose) {
 		vector<Rect> nose;
 		nose_cascade.detectMultiScale(faceROI, nose, 1.1, 3, 0 | CASCADE_SCALE_IMAGE,
-			Size(faces[i].width*0.15, faces[i].height*0.15), Size(faces[i].width*0.3, faces[i].height*0.3));
+			Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3));
 		if (nose.size()) {
-			add_best_point(NOSE, im, faces[i], nose[0], image_points);
+			isDetectedNose = true;
+			noseRect = nose[0];
+			noseTracker->init(im, noseRect);
+			add_best_point(NOSE, im, faceRect, noseRect, image_points);
 			found_point[NOSE] = true;
 		}
+	} else {
+		found_point[NOSE] = true;
+		noseTracker->update(im, noseRect);
+		add_best_point(NOSE, im, faceRect, noseRect, image_points);
+	}
 
+	/*if (!isDetectedEyes) {
 		vector<Rect> eyes;
 		eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 3, 0 | CASCADE_SCALE_IMAGE);
-					
 		for (size_t j = 0; j < eyes.size(); j++) {
-			if (found_point[LEFTEYE] && found_point[RIGHTEYE]) break;
-			add_eye_point(im, faces[i], eyes[j], image_points);
+			add_eye_point(im, faceRect, eyes[j], image_points);
 		}
-
+		isDetectedEyes = isDetectedLeftEye && isDetectedRightEye;
+	} else {
+		leftEyeTracker->update(im, leftEyeRect);
+		add_eye_point(im, faceRect, leftEyeRect, image_points);
+		rightEyeTracker->update(im, rightEyeRect);
+		add_eye_point(im, faceRect, rightEyeRect, image_points);
+		found_point[LEFTEYE] = found_point[RIGHTEYE] = true;
+	}
+		
+	if (!isDetectedMouth) {
 		vector<Rect> mouths;
-		mouth_cascade.detectMultiScale(faceROI, mouths, 1.4, 6, 0 | CASCADE_SCALE_IMAGE);			
+		mouth_cascade.detectMultiScale(faceROI, mouths, 1.4, 6, 0 | CASCADE_SCALE_IMAGE);
 		for (size_t j = 0; j < mouths.size(); j++) {
-			if (mouths[j].y + mouths[j].height*0.5 > faces[i].height * 0.5) {
+			if (mouths[j].y + mouths[j].height*0.5 > faceRect.height * 0.5) {
 				found_point[MOUTH] = true;
-				add_best_point(MOUTH, im, faces[i], mouths[j], image_points, Scalar(0, 255, 255));
+				isDetectedMouth = true;
+				mouthRect = mouths[j];
+				mouthTracker->init(im, mouthRect);
+				add_best_point(MOUTH, im, faceRect, mouthRect, image_points, Scalar(0, 255, 255));
 				break;
 			}
 		}
-		
-		break;
-	}
-	
+	} else {
+		found_point[MOUTH] = true;
+		mouthTracker->update(im, mouthRect);
+		add_best_point(MOUTH, im, faceRect, mouthRect, image_points, Scalar(0, 255, 255));
+	}*/
+	cv::imshow("Output", im);
+	//calcMatrix(im);
+}
+
+void calcMatrix(Mat im) {
 	// 3D model points.
 	std::vector<cv::Point3d> model_points;
 	std::vector<cv::Point2d> img_points_new;
@@ -151,16 +214,14 @@ void detect2dpoints(Mat im)
 		//model_points.push_back(cv::Point3d(0.0f, -150.0f, -125.0f));      // Mouth
 		img_points_new.push_back(image_points[MOUTH]);
 	}
-									//model_points.push_back(cv::Point3d(-150.0f, -150.0f, -125.0f));      // Left Mouth corner
-									//model_points.push_back(cv::Point3d(150.0f, -150.0f, -125.0f));       // Right mouth corner
-																	  // Camera internals
+	//model_points.push_back(cv::Point3d(-150.0f, -150.0f, -125.0f));      // Left Mouth corner
+	//model_points.push_back(cv::Point3d(150.0f, -150.0f, -125.0f));       // Right mouth corner
+	// Camera internals
 	int count = 0;
-	for (int i = 0; i < found_point.size(); i++){
+	for (int i = 0; i < found_point.size(); i++) {
 		count += found_point[i];
 	}
-	cv::imshow("Output", im);
-	return;
-	//
+
 	if (count < 4) {
 		cv::imshow("Output", im);
 		return;
@@ -173,15 +234,16 @@ void detect2dpoints(Mat im)
 		0, 0, 1);
 	cv::Mat dist_coeffs = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
 
-	cout << "Camera Matrix " << endl << camera_matrix << endl;
-	// Output rotation and translation
+																			//cout << "Camera Matrix " << endl << camera_matrix << endl;
+																			// Output rotation and translation
 	cv::Mat rotation_vector; // Rotation in axis-angle form
 	cv::Mat translation_vector;
 
 	// Solve for pose
 	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
 		cout << "ok!";
-	} else {
+	}
+	else {
 		cv::imshow("Output", im);
 		return;
 	}
@@ -191,7 +253,7 @@ void detect2dpoints(Mat im)
 
 	vector<Point3d> nose_end_point3D;
 	vector<Point2d> nose_end_point2D;
-	
+
 	double length = 500.0;
 	nose_end_point3D.push_back(Point3d(length, 0, 0));
 	nose_end_point3D.push_back(Point3d(-length, 0, 0));
@@ -210,14 +272,12 @@ void detect2dpoints(Mat im)
 	cv::line(im, nose_end_point2D[2], nose_end_point2D[3], cv::Scalar(0, 255, 0), 2);
 	cv::line(im, nose_end_point2D[4], nose_end_point2D[5], cv::Scalar(0, 0, 255), 2); // z
 	*/
-	cout << "Rotation Vector " << endl << rotation_vector << endl;
+	/*cout << "Rotation Vector " << endl << rotation_vector << endl;
 	cout << "Translation Vector" << endl << translation_vector << endl;
 
-	cout << nose_end_point2D << endl;
+	cout << nose_end_point2D << endl;*/
 
 	// Display image.
 	cv::imshow("Output", im);
 }
-
-
 
