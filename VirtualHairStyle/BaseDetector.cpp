@@ -154,11 +154,64 @@ PairFaceElementsDetector::~PairFaceElementsDetector()
 
 }
 
+bool PairFaceElementsDetector::try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
+{
+	if (_frame_count == _interval) {
+		_frame_count = 0;
+		_isDetected = _isDetectedLeft = _isDetectedRight = false;
+	}	
+	if (!_isDetected) {
+		if (!detect_and_tracker(im, frame_gray, faceRect)) return false;
+	} else {
+		_isDetectedLeft = _leftTracker->update(im, _detectedLeftRect);
+		_isDetectedRight = _rightTracker->update(im, _detectedRightRect);
+		if (!_isDetectedLeft && !_isDetectedRight && (!detect_and_tracker(im, frame_gray, faceRect))) return false;
+		add_point(im, faceRect, _detectedLeftRect);
+		add_point(im, faceRect, _detectedRightRect);
+	}
+	_frame_count++;
+	return true;
+}
+
+bool PairFaceElementsDetector::is_left(Rect eye, Rect face)
+{
+	return eye.x + eye.width*0.5 < face.width*0.5;
+}
+
+bool PairFaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
+{
+	vector<Rect> detectedObjects;
+	_cascade.detectMultiScale(frame_gray, detectedObjects, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
+	for (size_t j = 0; j < detectedObjects.size(); j++) {
+		add_point(im, faceRect, detectedObjects[j]);
+		if (_isDetectedLeft && _isDetectedRight) break;
+	}
+	if (detectedObjects.size() < 2) return false;
+	return true;
+}
+
+void PairFaceElementsDetector::add_point(cv::Mat im, Rect face, Rect elem)
+{
+	if (elem.y + elem.height*0.5 > face.height * 0.5) return;
+	if (is_left(elem, face) && !_isDetectedLeft) {
+		_isDetectedLeft = true;
+		_detectedLeftRect = elem;
+		_leftTracker = Tracker::create("KCF");
+		_leftTracker->init(im, _detectedLeftRect);
+	} else if (!is_left(elem, face) && !_isDetectedRight) {
+		_isDetectedRight = true;
+		_detectedRightRect = elem;
+		_rightTracker = Tracker::create("KCF");
+		_rightTracker->init(im, _detectedRightRect);
+	}
+}
+
 EyesDetector::EyesDetector() : PairFaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_eye.xml";
 	_leftTracker = Tracker::create("KCF");
 	_rightTracker = Tracker::create("KCF");
+	_interval = EYES_DETECTION_INTERVAL;
 }
 
 EyesDetector::~EyesDetector()
@@ -168,52 +221,6 @@ EyesDetector::~EyesDetector()
 
 bool EyesDetector::try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	if (_frame_count == EYES_DETECTION_INTERVAL) {
-		_frame_count = 0;
-		_isDetected = _isDetectedLeft = _isDetectedRight = false;
-	}
-	
-	if (!_isDetected) {
-		vector<Rect> eyes;
-		_cascade.detectMultiScale(frame_gray, eyes, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
-		for (size_t j = 0; j < eyes.size(); j++) {
-			add_eye_point(im, faceRect, eyes[j]);
-			if (_isDetectedLeft && _isDetectedRight) break;
-		}
-		if (eyes.size() < 2) return false;
-		_isDetected = _isDetectedLeft && _isDetectedRight;
-	} else {
-		if (_isDetectedLeft = _leftTracker->update(im, _detectedLeftRect))
-			add_eye_point(im, faceRect, _detectedLeftRect);
-		if (_isDetectedRight = _rightTracker->update(im, _detectedRightRect))
-			add_eye_point(im, faceRect, _detectedRightRect);
-	}
-	_frame_count++;
-	return true;
+	return PairFaceElementsDetector::try_detect_pair(im, frame_gray, faceRect, minSize, maxSize);
 }
 
-bool EyesDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
-{
-	return true;
-}
-
-void EyesDetector::add_eye_point(cv::Mat im, Rect face, Rect eye)
-{
-	if (eye.y + eye.height*0.5 > face.height * 0.5) return;
-	if (is_left_eye(eye, face) && !_isDetectedLeft) {
-		_isDetectedLeft = true;
-		_detectedLeftRect = eye;
-		_leftTracker = Tracker::create("KCF");
-		_leftTracker->init(im, _detectedLeftRect);
-	} else if (!is_left_eye(eye, face) && !_isDetectedRight) {
-		_isDetectedRight = true;
-		_detectedRightRect = eye;
-		_rightTracker = Tracker::create("KCF");
-		_rightTracker->init(im, _detectedRightRect);
-	}
-}
-
-bool EyesDetector::is_left_eye(Rect eye, Rect face)
-{
-	return eye.x + eye.width*0.5 < face.width*0.5;
-}

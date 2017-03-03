@@ -76,14 +76,20 @@ class PairFaceElementsDetector : public FaceElementsDetector
 public:
 	PairFaceElementsDetector();
 	~PairFaceElementsDetector();
-	virtual bool try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) { return false; }
+	virtual bool try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size());
 	Rect2d getLeftDetectedRect() { return _detectedLeftRect; }
 	Rect2d getRightDetectedRect() { return _detectedRightRect; }
+private:
+	bool is_left(Rect eye, Rect face);
+	void add_point(cv::Mat im, Rect face, Rect eye);
 protected:
+	virtual bool detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size());
 	Ptr<Tracker> _leftTracker;
 	Ptr<Tracker> _rightTracker;
 	Rect2d _detectedLeftRect;
 	Rect2d _detectedRightRect;
+	bool _isDetectedLeft;
+	bool _isDetectedRight;
 };
 
 class EyesDetector : public PairFaceElementsDetector
@@ -92,11 +98,6 @@ public:
 	EyesDetector();
 	~EyesDetector();
 	bool try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
-private:
-	bool is_left_eye(Rect eye, Rect face);
-	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
-	void add_eye_point(cv::Mat im, Rect face, Rect eye);
-	bool _isDetectedLeft = false, _isDetectedRight = false;
 };
 
 extern FaceDetector faceDetector;
