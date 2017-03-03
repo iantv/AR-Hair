@@ -54,8 +54,7 @@ bool FaceDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize
 bool FaceDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
 	vector<Rect> faces;
-	_cascade.detectMultiScale(
-		frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
+	_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	if (faces.size() == 0) return false;
 	_detectedRect = faces[0];
 	_tracker = Tracker::create("MEDIANFLOW");
@@ -73,10 +72,39 @@ FaceElementsDetector::~FaceElementsDetector()
 
 }
 
+bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
+{
+	if (_frame_count == _interval) {
+		_frame_count = 0;
+		_isDetected = false;
+	}
+	if (!_isDetected) {
+		if (!detect_and_tracker(im, frame_gray)) return false;
+	} else {
+		_isDetected = _tracker->update(im, _detectedRect);
+		if (!_isDetected && (!detect_and_tracker(im, frame_gray))) return false;
+	}
+	*rect = _detectedRect;
+	_frame_count++;
+}
+
+bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+{
+	vector<Rect> detectedObjects;
+	_cascade.detectMultiScale(frame_gray, detectedObjects, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
+	if (!detectedObjects.size()) return false;
+	_isDetected = true;
+	_detectedRect = detectedObjects[0];
+	_tracker = Tracker::create("KCF");
+	_isDetected = _tracker->init(im, _detectedRect);
+	return true;
+}
+
 NoseDetector::NoseDetector() : FaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_mcs_nose.xml";
 	_tracker = Tracker::create("KCF");
+	_interval = NOSE_DETECTION_INTERVAL;
 }
 
 NoseDetector::~NoseDetector()
@@ -86,43 +114,19 @@ NoseDetector::~NoseDetector()
 
 bool NoseDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
 {
-	if (_frame_count == NOSE_DETECTION_INTERVAL) {
-		_frame_count = 0;
-		_isDetected = false;
-	}
-	vector<Rect> nose;
-	if (!_isDetected) {
-		_cascade.detectMultiScale(frame_gray, nose, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
-		//call detect and tracker
-		if (!nose.size()) return false;
-		_isDetected = true;
-		_detectedRect = nose[0];
-		_tracker = Tracker::create("KCF");
-		_isDetected = _tracker->init(im, _detectedRect);
-	} else {
-		_isDetected = _tracker->update(im, _detectedRect);
-	}
-	*rect = _detectedRect;
-	_frame_count++;
-	return true;
+	return FaceElementsDetector::try_detect(im, frame_gray, rect, minSize, maxSize);
 }
 
 bool NoseDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	vector<Rect> nose;
-	_cascade.detectMultiScale(frame_gray, nose, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
-	if (!nose.size()) return false;
-	_isDetected = true;
-	_detectedRect = nose[0];
-	_tracker = Tracker::create("KCF");
-	_isDetected = _tracker->init(im, _detectedRect);
-	return true;
+	return FaceElementsDetector::detect_and_tracker(im, frame_gray, minSize, maxSize);
 }
 
 MouthDetector::MouthDetector() : FaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_mcs_mouth.xml";
 	_tracker = Tracker::create("KCF");
+	_interval = MOUTH_DETECTION_INTERVAL;
 }
 
 MouthDetector::~MouthDetector()
@@ -132,38 +136,12 @@ MouthDetector::~MouthDetector()
 
 bool MouthDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
 {
-	if (_frame_count == MOUTH_DETECTION_INTERVAL) {
-		_frame_count = 0;
-		_isDetected = false;
-	}
-	vector<Rect> mouth;
-	if (!_isDetected) {
-		_cascade.detectMultiScale(frame_gray, mouth, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
-		//call detect and tracker
-		if (!mouth.size()) return false;
-		_isDetected = true;
-		_detectedRect = mouth[0];
-		_tracker = Tracker::create("KCF");
-		_isDetected = _tracker->init(im, _detectedRect);
-	}
-	else {
-		_isDetected = _tracker->update(im, _detectedRect);
-	}
-	*rect = _detectedRect;
-	_frame_count++;
-	return true;
+	return FaceElementsDetector::try_detect(im, frame_gray, rect, minSize, maxSize);
 }
 
 bool MouthDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	vector<Rect> mouth;
-	_cascade.detectMultiScale(frame_gray, mouth, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
-	if (!mouth.size()) return false;
-	_isDetected = true;
-	_detectedRect = mouth[0];
-	_tracker = Tracker::create("KCF");
-	_isDetected = _tracker->init(im, _detectedRect);
-	return true;
+	return FaceElementsDetector::detect_and_tracker(im, frame_gray, minSize, maxSize);
 }
 
 PairFaceElementsDetector::PairFaceElementsDetector() : FaceElementsDetector()
