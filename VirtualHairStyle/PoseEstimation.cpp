@@ -33,11 +33,6 @@ static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect face, Rec
 vector<cv::Point2d> image_points(N_POINTS);
 static vector<bool> found_point(N_POINTS);
 
-bool is_left_eye(Rect eye, Rect face)
-{
-	return eye.x + eye.width*0.5 < face.width*0.5;
-}
-
 void calcMatrix(Mat im);
 unsigned int frameCount;
 
