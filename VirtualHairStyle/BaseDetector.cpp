@@ -27,6 +27,7 @@ FaceDetector::FaceDetector() : BaseDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_frontalface_alt.xml";
 	_tracker = Tracker::create("MEDIANFLOW");
+	_interval = FACE_DETECTION_INTERVAL;
 }
 
 FaceDetector::~FaceDetector()
@@ -36,7 +37,7 @@ FaceDetector::~FaceDetector()
 
 bool FaceDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	if (_frame_count == FACE_DETECTION_INTERVAL) {
+	if (_frame_count == _interval) {
 		_frame_count = 0;
 		_isDetected = false;
 	}
