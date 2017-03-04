@@ -34,7 +34,7 @@ FaceDetector::~FaceDetector()
 
 }
 
-bool FaceDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
+bool FaceDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
 	if (_frame_count == FACE_DETECTION_INTERVAL) {
 		_frame_count = 0;
@@ -46,7 +46,6 @@ bool FaceDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize
 		_isDetected = _tracker->update(im, _detectedRect);
 		if (!_isDetected && (!detect_and_tracker(im, frame_gray))) return false;
 	}
-	*rect = _detectedRect;
 	_frame_count++;
 	return true;
 }
@@ -72,7 +71,7 @@ FaceElementsDetector::~FaceElementsDetector()
 
 }
 
-bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
+bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
 	if (_frame_count == _interval) {
 		_frame_count = 0;
@@ -84,7 +83,7 @@ bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size
 		_isDetected = _tracker->update(im, _detectedRect);
 		if (!_isDetected && (!detect_and_tracker(im, frame_gray))) return false;
 	}
-	*rect = _detectedRect;
+	//*rect = _detectedRect;
 	_frame_count++;
 }
 
@@ -112,9 +111,9 @@ NoseDetector::~NoseDetector()
 
 }
 
-bool NoseDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
+bool NoseDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::try_detect(im, frame_gray, rect, minSize, maxSize);
+	return FaceElementsDetector::try_detect(im, frame_gray, minSize, maxSize);
 }
 
 bool NoseDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
@@ -134,9 +133,9 @@ MouthDetector::~MouthDetector()
 
 }
 
-bool MouthDetector::try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize, Size maxSize)
+bool MouthDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::try_detect(im, frame_gray, rect, minSize, maxSize);
+	return FaceElementsDetector::try_detect(im, frame_gray,  minSize, maxSize);
 }
 
 bool MouthDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)

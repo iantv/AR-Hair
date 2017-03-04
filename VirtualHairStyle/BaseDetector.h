@@ -36,7 +36,7 @@ class FaceDetector : public BaseDetector
 public:
 	FaceDetector();	
 	~FaceDetector();
-	bool try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize = Size(), Size maxSize = Size());
+	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
 private:
 	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
 };
@@ -46,7 +46,7 @@ class FaceElementsDetector : public BaseDetector
 public:
 	FaceElementsDetector();
 	~FaceElementsDetector();
-	virtual bool try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize = Size(), Size maxSize = Size());
+	virtual bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
 protected:
 	virtual bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
 };
@@ -56,7 +56,7 @@ class NoseDetector : public FaceElementsDetector
 public:
 	NoseDetector();
 	~NoseDetector();
-	bool try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize = Size(), Size maxSize = Size()) override;
+	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
 private:
 	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
 };
@@ -66,7 +66,7 @@ class MouthDetector : public FaceElementsDetector
 public:
 	MouthDetector();
 	~MouthDetector();
-	bool try_detect(Mat im, Mat frame_gray, Rect2d *rect, Size minSize = Size(), Size maxSize = Size()) override;
+	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
 private:
 	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
 };
