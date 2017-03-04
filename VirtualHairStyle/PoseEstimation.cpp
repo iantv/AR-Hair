@@ -50,7 +50,7 @@ void detect2dpoints(Mat im)
 	faceROI = frame_gray(faceRect);
 	rectangle(im, faceRect, Scalar(255, 0, 255), 2);
 	
-	if (!noseDetector.try_detect(im, faceROI, 
+	if (!noseDetector.try_detect(im, faceROI, faceRect,
 		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
 		cv::imshow("Output", im);
 		return;
@@ -65,7 +65,7 @@ void detect2dpoints(Mat im)
 	add_best_point(LEFTEYE, im, faceRect, eyesDetector.getLeftDetectedRect(), image_points, Scalar(255, 255, 0));
 	add_best_point(RIGHTEYE, im, faceRect, eyesDetector.getRightDetectedRect(), image_points, Scalar(0, 255, 0));
 
-	if (!mouthDetector.try_detect(im, faceROI, 
+	if (!mouthDetector.try_detect(im, faceROI, faceRect,
 		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
 		cv::imshow("Output", im);
 		return;

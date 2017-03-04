@@ -55,7 +55,7 @@ bool FaceDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size
 	vector<Rect> faces;
 	_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	if (faces.size() == 0) return false;
-	_detectedRect = faces[0];
+	_detectedRect = bestCandidate(faces);
 	_tracker = Tracker::create("MEDIANFLOW");
 	_isDetected = _tracker->init(im, _detectedRect);
 	return true;
@@ -71,29 +71,29 @@ FaceElementsDetector::~FaceElementsDetector()
 
 }
 
-bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
 	if (_frame_count == _interval) {
 		_frame_count = 0;
 		_isDetected = false;
 	}
 	if (!_isDetected) {
-		if (!detect_and_tracker(im, frame_gray)) return false;
+		if (!detect_and_tracker(im, frame_gray, faceRect)) return false;
 	} else {
 		_isDetected = _tracker->update(im, _detectedRect);
-		if (!_isDetected && (!detect_and_tracker(im, frame_gray))) return false;
+		if (!_isDetected && (!detect_and_tracker(im, frame_gray, faceRect))) return false;
 	}
 	//*rect = _detectedRect;
 	_frame_count++;
 }
 
-bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
 	vector<Rect> detectedObjects;
 	_cascade.detectMultiScale(frame_gray, detectedObjects, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	if (!detectedObjects.size()) return false;
 	_isDetected = true;
-	_detectedRect = detectedObjects[0];
+	_detectedRect = bestCandidate(detectedObjects, faceRect);//detectedObjects[0];
 	_tracker = Tracker::create("KCF");
 	_isDetected = _tracker->init(im, _detectedRect);
 	return true;
@@ -111,14 +111,14 @@ NoseDetector::~NoseDetector()
 
 }
 
-bool NoseDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool NoseDetector::try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::try_detect(im, frame_gray, minSize, maxSize);
+	return FaceElementsDetector::try_detect(im, frame_gray, faceRect, minSize, maxSize);
 }
 
-bool NoseDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool NoseDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::detect_and_tracker(im, frame_gray, minSize, maxSize);
+	return FaceElementsDetector::detect_and_tracker(im, frame_gray, faceRect, minSize, maxSize);
 }
 
 MouthDetector::MouthDetector() : FaceElementsDetector()
@@ -133,14 +133,23 @@ MouthDetector::~MouthDetector()
 
 }
 
-bool MouthDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool MouthDetector::try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::try_detect(im, frame_gray,  minSize, maxSize);
+	return FaceElementsDetector::try_detect(im, frame_gray,  faceRect, minSize, maxSize);
 }
 
-bool MouthDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
+bool MouthDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	return FaceElementsDetector::detect_and_tracker(im, frame_gray, minSize, maxSize);
+	return FaceElementsDetector::detect_and_tracker(im, frame_gray, faceRect, minSize, maxSize);
+}
+
+Rect2d MouthDetector::bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect)
+{
+	for (size_t i = 0; i < candidates.size(); i++) {
+		if (candidates[i].y + candidates[i].height*0.5 > faceRect.height * 0.65) {
+			return candidates[i];
+		}
+	}
 }
 
 PairFaceElementsDetector::PairFaceElementsDetector() : FaceElementsDetector()

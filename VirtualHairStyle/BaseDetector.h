@@ -22,6 +22,7 @@ public:
 	int load_cascade();
 	virtual Rect2d getDetectedRect() const { return _detectedRect; }
 protected:
+	virtual Rect2d bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect = Rect2d()) { return candidates[0]; }
 	CascadeClassifier _cascade;
 	String _cascadeName;
 	Ptr<Tracker> _tracker;
@@ -46,9 +47,9 @@ class FaceElementsDetector : public BaseDetector
 public:
 	FaceElementsDetector();
 	~FaceElementsDetector();
-	virtual bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
+	virtual bool try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size());
 protected:
-	virtual bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
+	virtual bool detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size());
 };
 
 class NoseDetector : public FaceElementsDetector
@@ -56,9 +57,9 @@ class NoseDetector : public FaceElementsDetector
 public:
 	NoseDetector();
 	~NoseDetector();
-	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
+	bool try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
 private:
-	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
+	bool detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
 };
 
 class MouthDetector : public FaceElementsDetector
@@ -66,9 +67,10 @@ class MouthDetector : public FaceElementsDetector
 public:
 	MouthDetector();
 	~MouthDetector();
-	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
+	bool try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
 private:
-	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size()) override;
+	Rect2d bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect = Rect2d()) override;
+	bool detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
 };
 
 class PairFaceElementsDetector : public FaceElementsDetector
