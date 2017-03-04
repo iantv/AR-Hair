@@ -173,7 +173,8 @@ bool PairFaceElementsDetector::try_detect_pair(Mat im, Mat frame_gray, Rect2d fa
 	} else {
 		_isDetectedLeft = _leftTracker->update(im, _detectedLeftRect);
 		_isDetectedRight = _rightTracker->update(im, _detectedRightRect);
-		if (!_isDetectedLeft && !_isDetectedRight && (!detect_and_tracker(im, frame_gray, faceRect))) return false;
+		_isDetected = _isDetectedLeft && _isDetectedRight;
+		if (!_isDetected && (!detect_and_tracker(im, frame_gray, faceRect))) return false;
 		add_point(im, faceRect, _detectedLeftRect);
 		add_point(im, faceRect, _detectedRightRect);
 	}
@@ -192,7 +193,7 @@ bool PairFaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d
 	_cascade.detectMultiScale(frame_gray, detectedObjects, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	for (size_t j = 0; j < detectedObjects.size(); j++) {
 		add_point(im, faceRect, detectedObjects[j]);
-		if (_isDetectedLeft && _isDetectedRight) break;
+		if (_isDetected) break;
 	}
 	if (detectedObjects.size() < 2) return false;
 	return true;
@@ -212,6 +213,7 @@ void PairFaceElementsDetector::add_point(cv::Mat im, Rect face, Rect elem)
 		_rightTracker = Tracker::create("KCF");
 		_rightTracker->init(im, _detectedRightRect);
 	}
+	_isDetected = _isDetectedLeft && _isDetectedRight;
 }
 
 EyesDetector::EyesDetector() : PairFaceElementsDetector()
