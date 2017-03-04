@@ -83,7 +83,6 @@ bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d faceRect, S
 		_isDetected = _tracker->update(im, _detectedRect);
 		if (!_isDetected && (!detect_and_tracker(im, frame_gray, faceRect))) return false;
 	}
-	//*rect = _detectedRect;
 	_frame_count++;
 }
 
@@ -93,7 +92,7 @@ bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d fac
 	_cascade.detectMultiScale(frame_gray, detectedObjects, 1.1, 3, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	if (!detectedObjects.size()) return false;
 	_isDetected = true;
-	_detectedRect = bestCandidate(detectedObjects, faceRect);//detectedObjects[0];
+	_detectedRect = bestCandidate(detectedObjects, faceRect);
 	_tracker = Tracker::create("KCF");
 	_isDetected = _tracker->init(im, _detectedRect);
 	return true;
