@@ -75,6 +75,9 @@ void detect2dpoints(Mat im)
 	//calcMatrix(im);
 }
 
+cv::Mat rotation_vector; // Rotation in axis-angle form
+cv::Mat translation_vector;
+
 void calcMatrix(Mat im) {
 	// 3D model points.
 	std::vector<cv::Point3d> model_points;
@@ -101,9 +104,6 @@ void calcMatrix(Mat im) {
 
 																			//cout << "Camera Matrix " << endl << camera_matrix << endl;
 																			// Output rotation and translation
-	cv::Mat rotation_vector; // Rotation in axis-angle form
-	cv::Mat translation_vector;
-
 	// Solve for pose
 	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
 		cout << "ok!";
