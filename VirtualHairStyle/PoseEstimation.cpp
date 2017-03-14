@@ -82,10 +82,10 @@ void calcMatrix(Mat im) {
 	// 3D model points.
 	std::vector<cv::Point3d> model_points;
 	std::vector<cv::Point2d> img_points_new;
-	
+
 	model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f));
 	img_points_new.push_back(image_points[NOSE]);
-	
+
 	model_points.push_back(Point3f(-36.9522f, 39.3518f, 47.1217f));
 	img_points_new.push_back(image_points[LEFTEYE]);
 
@@ -111,9 +111,6 @@ void calcMatrix(Mat im) {
 		cv::imshow("Output", im);
 		return;
 	}
-
-	// Project a 3D point (0, 0, 1000.0) onto the image plane.
-	// We use this to draw a line sticking out of the nose
 
 	vector<Point3d> nose_end_point3D;
 	vector<Point2d> nose_end_point2D;
