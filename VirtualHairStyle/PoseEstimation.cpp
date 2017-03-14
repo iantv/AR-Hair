@@ -14,13 +14,13 @@ static void draw_point(cv::Mat im, cv::Point2d point, Scalar color)
 	circle(im, point, 3, color, -1);
 }
 
-cv::Point2d get_center_point(Rect candidate)
+cv::Point2d get_center_point(Rect2d candidate)
 {
 	return cv::Point2d(candidate.x + candidate.width*0.5,
 		candidate.y + candidate.height*0.5);
 }
 
-static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect face, Rect obj,
+static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect2d face, Rect2d obj,
 	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0))
 {
 	cv::Point2d center = get_center_point(obj);
