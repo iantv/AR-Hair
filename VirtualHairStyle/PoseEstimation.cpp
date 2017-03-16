@@ -24,6 +24,7 @@ static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect2d face, R
 	vector<cv::Point2d> &image_points, Scalar color = Scalar(255, 0, 0))
 {
 	cv::Point2d center = get_center_point(obj);
+	//rectangle(im, obj, color, 2);
 	image_points[obj_as_idx] = center;
 	draw_point(im, center, color);
 }
@@ -71,12 +72,12 @@ void detect2dpoints(Mat im)
 		return;
 	}
 	add_best_point(MOUTH, im, faceRect, mouthDetector.getDetectedRect(), image_points, Scalar(0, 255, 255));
-	cv::imshow("Output", im);
-	//calcMatrix(im);
+	//cv::imshow("Output", im);
+	calcMatrix(im);
 }
 
-cv::Mat rotation_vector; // Rotation in axis-angle form
-cv::Mat translation_vector;
+static Mat rotation_vector;
+static Mat translation_vector;
 
 static vector<Point3d> nose_end_point3D;
 static vector<Point2d> nose_end_point2D;
@@ -91,7 +92,6 @@ static Mat camera_matrix;
 static Mat dist_coeffs;
 
 void calcMatrix(Mat im) {
-	// 3D model points.
 	std::vector<cv::Point2d> img_points_new;
 	if (model_points.empty()) {
 		model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f)); // nose
@@ -113,7 +113,7 @@ void calcMatrix(Mat im) {
 		dist_coeffs = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
 		camera_is_ready = true;
 	}
-																			// Solve for pose
+
 	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
 		cout << "ok!";
 	} else {
@@ -140,12 +140,7 @@ void calcMatrix(Mat im) {
 	cv::line(im, nose_end_point2D[2], nose_end_point2D[3], cv::Scalar(0, 255, 0), 2);
 	cv::line(im, nose_end_point2D[4], nose_end_point2D[5], cv::Scalar(0, 0, 255), 2); // z
 	*/
-	/*cout << "Rotation Vector " << endl << rotation_vector << endl;
-	cout << "Translation Vector" << endl << translation_vector << endl;
 
-	cout << nose_end_point2D << endl;*/
-
-	// Display image.
 	cv::imshow("Output", im);
 }
 
