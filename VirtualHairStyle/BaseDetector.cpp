@@ -38,7 +38,10 @@ FaceDetector::~FaceDetector()
 
 bool FaceDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
-	return _isDetected ? _tracker->update(im, _detectedRect) : detect_and_tracker(im, frame_gray);
+	if (_isDetected && (_isDetected = _tracker->update(im, _detectedRect))) {
+		return _isDetected;
+	}
+	return _isDetected = detect_and_tracker(im, frame_gray);
 }
 
 bool FaceDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size maxSize)
@@ -47,8 +50,9 @@ bool FaceDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size
 	_cascade.detectMultiScale(frame_gray, faces, 1.3, 5, 0 | CASCADE_SCALE_IMAGE, minSize, maxSize);
 	if (faces.size() == 0) return false;
 	_detectedRect = bestCandidate(faces);
+	_tracker = Tracker::create(_trackerName);
 	_tracker->init(im, _detectedRect);
-	return _isDetected = true;
+	return true;
 }
 
 FaceElementsDetector::FaceElementsDetector() : BaseDetector()
