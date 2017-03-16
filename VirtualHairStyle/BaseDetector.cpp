@@ -98,6 +98,16 @@ bool NoseDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, S
 	return FaceElementsDetector::detect_and_tracker(im, frame_gray, faceRect, minSize, maxSize);
 }
 
+Rect2d NoseDetector::bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect)
+{
+	for (size_t i = 0; i < candidates.size(); i++) {
+		if ((candidates[i].y + candidates[i].height*0.5 > faceRect.height * 0.25) &&
+			(candidates[i].y + candidates[i].height*0.5 < faceRect.height * 0.75)) {
+			return candidates[i];
+		}
+	}
+}
+
 MouthDetector::MouthDetector() : FaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_mcs_mouth.xml";

@@ -58,6 +58,7 @@ public:
 	NoseDetector();
 	~NoseDetector();
 	bool try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
+	Rect2d bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect = Rect2d()) override;
 private:
 	bool detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size()) override;
 };
