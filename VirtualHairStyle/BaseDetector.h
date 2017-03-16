@@ -14,6 +14,8 @@ using namespace cv;
 #define MOUTH_DETECTION_INTERVAL 1
 #define EYES_DETECTION_INTERVAL 1
 
+#include <string>
+
 class BaseDetector
 {
 public:
@@ -30,6 +32,7 @@ protected:
 	bool _isDetected;
 	int _frame_count;
 	unsigned int _interval;
+	std::string _trackerName;
 };
 
 class FaceDetector : public BaseDetector

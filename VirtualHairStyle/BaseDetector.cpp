@@ -26,7 +26,8 @@ int BaseDetector::load_cascade()
 FaceDetector::FaceDetector() : BaseDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_frontalface_alt.xml";
-	_tracker = Tracker::create("MEDIANFLOW");
+	_trackerName = "MEDIANFLOW";
+	_tracker = Tracker::create(_trackerName);
 	_interval = FACE_DETECTION_INTERVAL;
 }
 
