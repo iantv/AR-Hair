@@ -84,7 +84,8 @@ bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d fac
 NoseDetector::NoseDetector() : FaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_mcs_nose.xml";
-	_tracker = Tracker::create("KCF");
+	_trackerName = "KCF";
+	_tracker = Tracker::create(_trackerName);
 	_interval = NOSE_DETECTION_INTERVAL;
 }
 
@@ -116,7 +117,8 @@ Rect2d NoseDetector::bestCandidate(std::vector<Rect> &candidates, Rect2d faceRec
 MouthDetector::MouthDetector() : FaceElementsDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_mcs_mouth.xml";
-	_tracker = Tracker::create("KCF");
+	_trackerName = "KCF";
+	_tracker = Tracker::create(_trackerName);
 	_interval = MOUTH_DETECTION_INTERVAL;
 }
 
