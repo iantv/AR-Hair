@@ -76,8 +76,8 @@ void detect2dpoints(Mat im)
 	calcMatrix(im);
 }
 
-static Mat rotation_vector;
-static Mat translation_vector;
+Mat rotation_vector;
+Mat translation_vector;
 
 static vector<Point3d> nose_end_point3D;
 static vector<Point2d> nose_end_point2D;
