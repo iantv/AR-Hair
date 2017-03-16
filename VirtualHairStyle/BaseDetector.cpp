@@ -23,6 +23,10 @@ int BaseDetector::load_cascade()
 	return 1;
 }
 
+void BaseDetector::resetDetectedFlag(bool value) {
+	_isDetected = value;
+}
+
 FaceDetector::FaceDetector() : BaseDetector()
 {
 	_cascadeName = "haarcascades/haarcascade_frontalface_alt.xml";
@@ -38,9 +42,12 @@ FaceDetector::~FaceDetector()
 
 bool FaceDetector::try_detect(Mat im, Mat frame_gray, Size minSize, Size maxSize)
 {
+	_status = FAIL_STATUS;
 	if (_isDetected && (_isDetected = _tracker->update(im, _detectedRect))) {
+		_status = TRACKING_STATUS;
 		return _isDetected;
 	}
+	_status = DETECT_STATUS;
 	return _isDetected = detect_and_tracker(im, frame_gray);
 }
 
@@ -53,6 +60,10 @@ bool FaceDetector::detect_and_tracker(Mat im, Mat frame_gray, Size minSize, Size
 	_tracker = Tracker::create(_trackerName);
 	_tracker->init(im, _detectedRect);
 	return true;
+}
+
+FaceDetectionStatus FaceDetector::getStatus() {
+	return _status;
 }
 
 FaceElementsDetector::FaceElementsDetector() : BaseDetector()

@@ -23,6 +23,7 @@ public:
 	~BaseDetector();
 	int load_cascade();
 	virtual Rect2d getDetectedRect() const { return _detectedRect; }
+	virtual void resetDetectedFlag(bool value);
 protected:
 	virtual Rect2d bestCandidate(std::vector<Rect> &candidates, Rect2d faceRect = Rect2d()) { return candidates[0]; }
 	CascadeClassifier _cascade;
@@ -35,13 +36,16 @@ protected:
 	std::string _trackerName;
 };
 
+enum FaceDetectionStatus { TRACKING_STATUS, DETECT_STATUS, FAIL_STATUS };
 class FaceDetector : public BaseDetector
 {
 public:
 	FaceDetector();	
 	~FaceDetector();
 	bool try_detect(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
+	FaceDetectionStatus getStatus();
 private:
+	FaceDetectionStatus _status;
 	bool detect_and_tracker(Mat im, Mat frame_gray, Size minSize = Size(), Size maxSize = Size());
 };
 
@@ -85,6 +89,7 @@ public:
 	virtual bool try_detect_pair(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize = Size(), Size maxSize = Size());
 	Rect2d getLeftDetectedRect() { return _detectedLeftRect; }
 	Rect2d getRightDetectedRect() { return _detectedRightRect; }
+	void resetDetectedFlag(bool value) override;
 private:
 	bool is_left(Rect eye, Rect face);
 	void add_point(cv::Mat im, Rect face, Rect eye);

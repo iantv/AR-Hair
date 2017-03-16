@@ -50,7 +50,12 @@ void detect2dpoints(Mat im)
 	Rect2d faceRect = faceDetector.getDetectedRect(); 
 	faceROI = frame_gray(faceRect);
 	rectangle(im, faceRect, Scalar(255, 0, 255), 2);
-	
+
+	if (faceDetector.getStatus() == DETECT_STATUS) {
+		noseDetector.resetDetectedFlag(false);
+		mouthDetector.resetDetectedFlag(false);
+		eyesDetector.resetDetectedFlag(false);
+	}
 	if (!noseDetector.try_detect(im, faceROI, faceRect,
 		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
 		cv::imshow("Output", im);
