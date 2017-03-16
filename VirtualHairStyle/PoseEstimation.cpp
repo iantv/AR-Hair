@@ -82,7 +82,7 @@ Mat translation_vector;
 static vector<Point3d> nose_end_point3D;
 static vector<Point2d> nose_end_point2D;
 
-static double length = 500.0;
+static double length = 200.0;
 static bool camera_is_ready = false;
 static vector<Point3d> model_points;
 
