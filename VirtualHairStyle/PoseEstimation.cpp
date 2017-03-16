@@ -78,33 +78,42 @@ void detect2dpoints(Mat im)
 cv::Mat rotation_vector; // Rotation in axis-angle form
 cv::Mat translation_vector;
 
+static vector<Point3d> nose_end_point3D;
+static vector<Point2d> nose_end_point2D;
+
+static double length = 500.0;
+static bool camera_is_ready = false;
+static vector<Point3d> model_points;
+
+static double focal_length;
+static Point2d center;
+static Mat camera_matrix;
+static Mat dist_coeffs;
+
 void calcMatrix(Mat im) {
 	// 3D model points.
-	std::vector<cv::Point3d> model_points;
 	std::vector<cv::Point2d> img_points_new;
-
-	model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f));
+	if (model_points.empty()) {
+		model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f)); // nose
+		model_points.push_back(Point3f(-36.9522f, 39.3518f, 47.1217f)); // lefteye
+		model_points.push_back(Point3f(35.446f, 38.4345f, 47.6468f)); // righteye
+		model_points.push_back(Point3f(-0.0697709f, -29.2935f, 72.7329f)); // mouth
+	}
 	img_points_new.push_back(image_points[NOSE]);
-
-	model_points.push_back(Point3f(-36.9522f, 39.3518f, 47.1217f));
 	img_points_new.push_back(image_points[LEFTEYE]);
-
-	model_points.push_back(Point3f(35.446f, 38.4345f, 47.6468f));
 	img_points_new.push_back(image_points[RIGHTEYE]);
-
-	model_points.push_back(Point3f(-0.0697709f, -29.2935f, 72.7329f));
 	img_points_new.push_back(image_points[MOUTH]);
 
-	double focal_length = MAX(im.cols, im.rows); // Approximate focal length.
-	Point2d center = cv::Point2d(im.cols / 2, im.rows / 2);
-	cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << focal_length, 0, center.x,
-		0, focal_length, center.y,
-		0, 0, 1);
-	cv::Mat dist_coeffs = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
-
-																			//cout << "Camera Matrix " << endl << camera_matrix << endl;
-																			// Output rotation and translation
-	// Solve for pose
+	if (!camera_is_ready) {
+		focal_length = MAX(im.cols, im.rows); // Approximate focal length.
+		center = cv::Point2d(im.cols / 2, im.rows / 2);
+		camera_matrix = (cv::Mat_<double>(3, 3) << focal_length, 0, center.x,
+			0, focal_length, center.y,
+			0, 0, 1);
+		dist_coeffs = cv::Mat::zeros(4, 1, cv::DataType<double>::type); // Assuming no lens distortion
+		camera_is_ready = true;
+	}
+																			// Solve for pose
 	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
 		cout << "ok!";
 	} else {
@@ -112,16 +121,14 @@ void calcMatrix(Mat im) {
 		return;
 	}
 
-	vector<Point3d> nose_end_point3D;
-	vector<Point2d> nose_end_point2D;
-
-	double length = 500.0;
-	nose_end_point3D.push_back(Point3d(length, 0, 0));
-	nose_end_point3D.push_back(Point3d(-length, 0, 0));
-	nose_end_point3D.push_back(Point3d(0, length, 0));
-	nose_end_point3D.push_back(Point3d(0, -length, 0));
-	nose_end_point3D.push_back(Point3d(0, 0, length));
-	nose_end_point3D.push_back(Point3d(0, 0, -length));
+	if (nose_end_point3D.empty()) {
+		nose_end_point3D.push_back(Point3d(length, 0, 0));
+		nose_end_point3D.push_back(Point3d(-length, 0, 0));
+		nose_end_point3D.push_back(Point3d(0, length, 0));
+		nose_end_point3D.push_back(Point3d(0, -length, 0));
+		nose_end_point3D.push_back(Point3d(0, 0, length));
+		nose_end_point3D.push_back(Point3d(0, 0, -length));
+	}
 
 	projectPoints(nose_end_point3D, rotation_vector, translation_vector, camera_matrix, dist_coeffs, nose_end_point2D);
 
