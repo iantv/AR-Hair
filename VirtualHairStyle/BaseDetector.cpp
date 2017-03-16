@@ -67,7 +67,10 @@ FaceElementsDetector::~FaceElementsDetector()
 
 bool FaceElementsDetector::try_detect(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
 {
-	return  _isDetected ? _tracker->update(im, _detectedRect) : detect_and_tracker(im, frame_gray, faceRect);
+	if (_isDetected && (_isDetected = _tracker->update(im, _detectedRect))) {
+		return _isDetected;
+	}
+	return _isDetected = detect_and_tracker(im, frame_gray, faceRect);
 }
 
 bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d faceRect, Size minSize, Size maxSize)
@@ -77,8 +80,9 @@ bool FaceElementsDetector::detect_and_tracker(Mat im, Mat frame_gray, Rect2d fac
 	if (!detectedObjects.size()) return false;
 	Rect2d tRect = bestCandidate(detectedObjects, faceRect);
 	_detectedRect = Rect2d(tRect.x + faceRect.x, tRect.y + faceRect.y, tRect.width, tRect.height);
+	_tracker = Tracker::create(_trackerName);
 	_tracker->init(im, _detectedRect);
-	return _isDetected = true;
+	return true;
 }
 
 NoseDetector::NoseDetector() : FaceElementsDetector()
