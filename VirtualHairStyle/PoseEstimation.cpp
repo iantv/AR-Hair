@@ -119,8 +119,9 @@ void calcMatrix(Mat im) {
 		camera_is_ready = true;
 	}
 
-	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, rotation_vector, translation_vector, false, CV_ITERATIVE)) {
-		cout << "ok!";
+	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, 
+		rotation_vector, translation_vector, false, SOLVEPNP_ITERATIVE)) {
+		cout << "solvePnP was success" << endl;
 	} else {
 		cv::imshow("Output", im);
 		return;
