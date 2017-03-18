@@ -129,18 +129,15 @@ void calcMatrix(Mat im) {
 
 	if (nose_end_point3D.empty()) {
 		nose_end_point3D.push_back(Point3d(length, 0, 0));
-		nose_end_point3D.push_back(Point3d(-length, 0, 0));
 		nose_end_point3D.push_back(Point3d(0, length, 0));
-		nose_end_point3D.push_back(Point3d(0, -length, 0));
 		nose_end_point3D.push_back(Point3d(0, 0, length));
-		nose_end_point3D.push_back(Point3d(0, 0, -length));
 	}
 
 	projectPoints(nose_end_point3D, rotation_vector, translation_vector, camera_matrix, dist_coeffs, nose_end_point2D);
 
 	cv::line(im, image_points[NOSE], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2);
-	cv::line(im, image_points[NOSE], nose_end_point2D[2], cv::Scalar(0, 255, 0), 2);
-	cv::line(im, image_points[NOSE], nose_end_point2D[4], cv::Scalar(0, 0, 255), 2);
+	cv::line(im, image_points[NOSE], nose_end_point2D[1], cv::Scalar(0, 255, 0), 2);
+	cv::line(im, image_points[NOSE], nose_end_point2D[2], cv::Scalar(0, 0, 255), 2);
 
 	cv::imshow("Output", im);
 }
