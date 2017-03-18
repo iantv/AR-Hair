@@ -140,12 +140,7 @@ void calcMatrix(Mat im) {
 
 	cv::line(im, image_points[NOSE], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2);
 	cv::line(im, image_points[NOSE], nose_end_point2D[2], cv::Scalar(0, 255, 0), 2);
-	cv::line(im, image_points[NOSE], nose_end_point2D[4], cv::Scalar(0, 0, 255), 2); // z
-	/*
-	cv::line(im, nose_end_point2D[0], nose_end_point2D[1], cv::Scalar(255, 0, 0), 2);
-	cv::line(im, nose_end_point2D[2], nose_end_point2D[3], cv::Scalar(0, 255, 0), 2);
-	cv::line(im, nose_end_point2D[4], nose_end_point2D[5], cv::Scalar(0, 0, 255), 2); // z
-	*/
+	cv::line(im, image_points[NOSE], nose_end_point2D[4], cv::Scalar(0, 0, 255), 2);
 
 	cv::imshow("Output", im);
 }
