@@ -39,7 +39,7 @@ int main(int argc, const char** argv) {
 				printf(" --(!) No captured frame -- Break!"); break;
 			}
 
-			int c = waitKey(10);
+			int c = waitKey(1);
 			if ((char)c == 'c') { break; }
 		}
 	}
