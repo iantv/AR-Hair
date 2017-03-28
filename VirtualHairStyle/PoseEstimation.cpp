@@ -57,14 +57,14 @@ void detect2dpoints(Mat im)
 		eyesDetector.resetDetectedFlag(false);
 	}
 	if (!noseDetector.try_detect(im, faceROI, faceRect,
-		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
+		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.2, faceRect.height*0.2))) {
 		cv::imshow("Output", im);
 		return;
 	}
 	add_best_point(NOSE, im, faceRect, noseDetector.getDetectedRect(), image_points);
 	
 	if (!eyesDetector.try_detect_pair(im, faceROI, faceRect,
-		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
+		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.2, faceRect.height*0.2))) {
 		cv::imshow("Output", im);
 		return;
 	}
@@ -72,7 +72,7 @@ void detect2dpoints(Mat im)
 	add_best_point(RIGHTEYE, im, faceRect, eyesDetector.getRightDetectedRect(), image_points, Scalar(0, 255, 0));
 
 	if (!mouthDetector.try_detect(im, faceROI, faceRect,
-		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.3, faceRect.height*0.3))) {
+		Size(faceRect.width*0.15, faceRect.height*0.15), Size(faceRect.width*0.2, faceRect.height*0.2))) {
 		cv::imshow("Output", im);
 		return;
 	}
