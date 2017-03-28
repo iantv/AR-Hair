@@ -97,17 +97,12 @@ static Mat camera_matrix;
 static Mat dist_coeffs;
 
 void calcMatrix(Mat im) {
-	std::vector<cv::Point2d> img_points_new;
 	if (model_points.empty()) {
 		model_points.push_back(Point3f(-0.0697709f, 18.6015f, 87.9695f)); // nose
 		model_points.push_back(Point3f(-36.9522f, 39.3518f, 47.1217f)); // lefteye
 		model_points.push_back(Point3f(35.446f, 38.4345f, 47.6468f)); // righteye
 		model_points.push_back(Point3f(-0.0697709f, -29.2935f, 72.7329f)); // mouth
 	}
-	img_points_new.push_back(image_points[NOSE]);
-	img_points_new.push_back(image_points[LEFTEYE]);
-	img_points_new.push_back(image_points[RIGHTEYE]);
-	img_points_new.push_back(image_points[MOUTH]);
 
 	if (!camera_is_ready) {
 		focal_length = MAX(im.cols, im.rows); // Approximate focal length.
@@ -119,7 +114,7 @@ void calcMatrix(Mat im) {
 		camera_is_ready = true;
 	}
 
-	if (cv::solvePnP(model_points, img_points_new, camera_matrix, dist_coeffs, 
+	if (cv::solvePnP(model_points, image_points, camera_matrix, dist_coeffs,
 		rotation_vector, translation_vector, false, SOLVEPNP_ITERATIVE)) {
 		cout << "solvePnP was success" << endl;
 	} else {
