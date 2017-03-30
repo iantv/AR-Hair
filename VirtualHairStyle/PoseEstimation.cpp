@@ -1,6 +1,6 @@
 #include "PoseEstimation.h"
 #include <Windows.h>
-
+#include "HeadPos.h"
 #define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
 #include <stdio.h>
 #include <iostream>
@@ -26,7 +26,7 @@ static void add_best_point(face_objects_t obj_as_idx, cv::Mat im, Rect2d face, R
 	cv::Point2d center = get_center_point(obj);
 	//rectangle(im, obj, color, 2);
 	image_points[obj_as_idx] = center;
-	draw_point(im, center, color);
+	//draw_point(im, center, color);
 }
 
 #define N_POINTS 4
@@ -77,8 +77,10 @@ void detect2dpoints(Mat im)
 		return;
 	}
 	add_best_point(MOUTH, im, faceRect, mouthDetector.getDetectedRect(), image_points, Scalar(0, 255, 255));
+	imgTex.set(im);
+	solveHeadPos(Mat(image_points), im);
 	//cv::imshow("Output", im);
-	calcMatrix(im);
+	//calcMatrix(im);
 }
 
 Mat rotation_vector;
@@ -121,19 +123,19 @@ void calcMatrix(Mat im) {
 		cv::imshow("Output", im);
 		return;
 	}
-
+	// return
 	if (nose_end_point3D.empty()) {
 		nose_end_point3D.push_back(Point3d(length, 0, 0));
 		nose_end_point3D.push_back(Point3d(0, length, 0));
 		nose_end_point3D.push_back(Point3d(0, 0, length));
 	}
-
+	
 	projectPoints(nose_end_point3D, rotation_vector, translation_vector, camera_matrix, dist_coeffs, nose_end_point2D);
 
 	cv::line(im, image_points[NOSE], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2);
 	cv::line(im, image_points[NOSE], nose_end_point2D[1], cv::Scalar(0, 255, 0), 2);
 	cv::line(im, image_points[NOSE], nose_end_point2D[2], cv::Scalar(0, 0, 255), 2);
-
+	
 	cv::imshow("Output", im);
 }
 
