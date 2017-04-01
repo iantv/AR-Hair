@@ -80,6 +80,8 @@ void resize(int width, int height)
 }
 
 int __w=250,__h=250;
+bool readFrame;
+bool stopReadFrame;
 
 void key(unsigned char key, int x, int y)
 {
@@ -105,6 +107,17 @@ void key(unsigned char key, int x, int y)
 			saveOpenGLBuffer();
 		loadNext();
 		break;
+	case 't':
+	case 'T': {
+		readFrame = true;
+		break;
+	}
+	case 'p':
+	case 'P':
+	{
+		stopReadFrame = !stopReadFrame;
+		break;
+	}
     default:
         break;
     }
@@ -204,7 +217,8 @@ void display(void)
 {	
 	Mat frame;
 	if (capture.isOpened()) {
-		if (capture.read(frame)) { // while
+		if (!stopReadFrame/* && readFrame */&& capture.read(frame)) { // while
+			readFrame = false;
 			if (!frame.empty()) {
 				//frameCount++;
 				detect2dpoints(frame);
