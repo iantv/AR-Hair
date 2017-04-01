@@ -280,7 +280,7 @@ void init_opengl(int argc, char** argv) {
 	
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH); // | GLUT_MULTISAMPLE
-    glutCreateWindow("head pose");
+    glutCreateWindow("Virtual HairStyle");
 	
 	myGLinit();
 	
