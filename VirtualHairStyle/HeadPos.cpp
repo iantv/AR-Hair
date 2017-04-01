@@ -339,6 +339,7 @@ void loadNext() {
 	counter = (counter+1);
 }
 
+bool useExtrinsicGauss;
 void solveHeadPos(Mat& ip, Mat& img) {
 	int max_d = MAX(img.rows, img.cols);
 	camMatrix = (Mat_<double>(3, 3) << max_d, 0, img.cols / 2.0,
@@ -347,8 +348,10 @@ void solveHeadPos(Mat& ip, Mat& img) {
 	cout << "using cam matrix " << endl << camMatrix << endl;
 
 	double _dc[] = { 0,0,0,0 };
-	solvePnP(op, ip, camMatrix, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, false, SOLVEPNP_ITERATIVE);
-	
+	if (!solvePnPRansac(op, ip, camMatrix, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, useExtrinsicGauss, 100, 1)) {
+		cout << "solvePnP was fail" << endl;
+		useExtrinsicGauss = true;
+	}
 	Mat rotM(3, 3, CV_64FC1, rot);
 	Rodrigues(rvec, rotM);
 	double* _r = rotM.ptr<double>();
