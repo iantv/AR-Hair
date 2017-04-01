@@ -238,8 +238,6 @@ void display(void)
 	glDisable2D();
 
 	glClear(GL_DEPTH_BUFFER_BIT); // we want to draw stuff over the image
-	
-	// draw only on left part
 	glViewport(0, 0, vPort[2], vPort[3]);
 	
 	glPushMatrix();
@@ -345,7 +343,6 @@ void solveHeadPos(Mat& ip, Mat& img) {
 	camMatrix = (Mat_<double>(3, 3) << max_d, 0, img.cols / 2.0,
 		0, max_d, img.rows / 2.0,
 		0, 0, 1.0);
-	cout << "using cam matrix " << endl << camMatrix << endl;
 
 	double _dc[] = { 0,0,0,0 };
 	if (!solvePnPRansac(op, ip, camMatrix, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, useExtrinsicGauss, 100, 1)) {
@@ -355,29 +352,7 @@ void solveHeadPos(Mat& ip, Mat& img) {
 	Mat rotM(3, 3, CV_64FC1, rot);
 	Rodrigues(rvec, rotM);
 	double* _r = rotM.ptr<double>();
-	printf("rotation mat: \n %.3f %.3f %.3f\n%.3f %.3f %.3f\n%.3f %.3f %.3f\n",
-		_r[0], _r[1], _r[2], _r[3], _r[4], _r[5], _r[6], _r[7], _r[8]);
 
-	printf("trans vec: \n %.3f %.3f %.3f\n", tv[0], tv[1], tv[2]);
-
-	/*double _pm[12] = { _r[0],_r[1],_r[2],tv[0],
-		_r[3],_r[4],_r[5],tv[1],
-		_r[6],_r[7],_r[8],tv[2] };
-		*/
-	//Matx34d P(_pm);
-	//Mat KP = camMatrix * Mat(P);
-	//	cout << "KP " << endl << KP << endl;
-
-	//reproject object points - check validity of found projection matrix
-	/*for (int i = 0; i<op.rows; i++) {
-		Mat_<double> X = (Mat_<double>(4, 1) << op.at<float>(i, 0), op.at<float>(i, 1), op.at<float>(i, 2), 1.0);
-		//		cout << "object point " << X << endl;
-		Mat_<double> opt_p = KP * X;
-		Point2f opt_p_img(opt_p(0) / opt_p(2), opt_p(1) / opt_p(2));
-		//		cout << "object point reproj " << opt_p_img << endl; 
-
-		circle(img, opt_p_img, 4, Scalar(0, 0, 255), 1);
-	}*/
 	rotM = rotM.t();// transpose to conform with majorness of opengl matrix
 }
 

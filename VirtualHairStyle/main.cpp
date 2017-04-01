@@ -63,70 +63,19 @@ int main(int argc, char **argv) {
 	imgTex = MakeOpenCVGLTexture(Mat());
 	imgWithDrawing = MakeOpenCVGLTexture(Mat());
 
-	//loadNext();
 	if (!faceDetector.load_cascade() ||
 		!noseDetector.load_cascade() ||
 		!eyesDetector.load_cascade() ||
 		!mouthDetector.load_cascade()) return -1;
 
 	//capture.open(0);
-	//capture.open("C:\\Users\\iantv\\Videos\\gagara.mp4");
-	//capture.set(CV_CAP_PROP_POS_MSEC, 360000);
-	capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
-	capture.set(CV_CAP_PROP_POS_MSEC, 225000);
-
-	/*if (capture.isOpened()) {
-		if (capture.read(frame)) { // while
-			if (!frame.empty()) {
-				frameCount++;
-				imgTex.set(frame);
-				detect2dpoints(frame);
-			}
-			else {
-				printf(" --(!) No captured frame -- Break!"); //break;
-			}
-		}
-			int c = waitKey(1);
-	}*/
-
+	capture.open("C:\\Users\\iantv\\Videos\\gagara.mp4");
+	capture.set(CV_CAP_PROP_POS_MSEC, 360000);
+	/*capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
+	capture.set(CV_CAP_PROP_POS_MSEC, 225000);*/
 	glutMainLoop();
 
 	return 1;
 
 	return 0;
 }
-
-/*int main(int argc, char** argv) {
-	return sample(argc, argv);
-	
-	if (!faceDetector.load_cascade() ||
-		!noseDetector.load_cascade() ||
-		!eyesDetector.load_cascade() ||
-		!mouthDetector.load_cascade()) return -1;
-	
-	VideoCapture capture;
-	Mat frame;
-
-	//capture.open(0);
-	capture.open("C:\\Users\\iantv\\Videos\\gagara.mp4");
-	capture.set(CV_CAP_PROP_POS_MSEC, 360000);
-	//capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
-	//capture.set(CV_CAP_PROP_POS_MSEC, 225000);
-	
-	if (capture.isOpened()) {
-		while (capture.read(frame)) {
-			//flip(frame, frame, 1);
-			if (!frame.empty()) {
-				frameCount++;
-				detect2dpoints(frame);
-			}
-			else {
-				printf(" --(!) No captured frame -- Break!"); break;
-			}
-
-			int c = waitKey(1);
-			if ((char)c == 'c') { break; }
-		}
-	}
-	return 0;
-}*/

@@ -75,8 +75,6 @@ void detect2dpoints(Mat im)
 	add_best_point(MOUTH, im, faceRect, mouthDetector.getDetectedRect(), image_points, Scalar(0, 255, 255));
 	imgTex.set(im);
 	solveHeadPos(Mat(image_points), im);
-	//cv::imshow("Output", im);
-	//calcMatrix(im);
 }
 
 Mat rotation_vector;
