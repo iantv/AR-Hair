@@ -7,15 +7,13 @@
 
 extern std::vector<double> rv, tv;
 extern cv::Mat rvec, tvec;
-extern cv::Mat camMatrix;
+extern cv::Mat cam_mat;
 extern GLMmodel* head_obj;
 extern cv::Mat op;
-extern OpenCVGLTexture imgTex, imgWithDrawing;
+extern OpenCVGLTexture imgTex;
 
-extern VideoCapture capture;
-
-void loadNext();
-int sample(int argc, char** argv);
+extern cv::VideoCapture capture;
+extern cv::Point2d camera_center;
 
 void init_opengl(int argc, char** argv);
-void solveHeadPos(Mat& ip, Mat& img);
+void solve_head_pos(cv::Mat& ip, cv::Mat& img);

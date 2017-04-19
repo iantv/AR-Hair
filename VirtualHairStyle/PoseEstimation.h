@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
-//#include "glut.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/objdetect.hpp>
@@ -13,6 +12,12 @@
 #include <opencv/cxcore.h>
 #include "BaseDetector.h"
 
-extern unsigned int frameCount;
+#include <dlib/opencv.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
+#include <dlib/gui_widgets.h>
 
-void detect2dpoints(cv::Mat im);
+extern dlib::frontal_face_detector detector;
+extern dlib::shape_predictor pose_model;
+void detect_2d_points(cv::Mat img);
