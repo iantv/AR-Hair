@@ -2,8 +2,14 @@
 .vs
 *.sln
 VirtualHairStyle/Debug/
+VirtualHairStyle/Release/
 VirtualHairStyle.VC.*
 VirtualHairStyle/haarcascades*
 Debug/
 FaceTrackingTutorial/*
 OpenGLTutorial/*
+DlibExamples/*
+HeadPosPnP/*
+Release/*
+*.exe
+*.rar
