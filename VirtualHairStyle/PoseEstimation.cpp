@@ -34,9 +34,7 @@ void detect_2d_points(cv::Mat &img) {
 	std::vector<cv::Point2d> img_points;
 	dlib::cv_image<dlib::bgr_pixel> cimg(img);	
 	
-	// Detect faces 
 	std::vector<dlib::rectangle> faces = detector(cimg);
-	// Find the pose of each face.
 	std::vector<dlib::full_object_detection> shapes;
 
 	for (unsigned long i = 0; i < faces.size(); ++i) {
