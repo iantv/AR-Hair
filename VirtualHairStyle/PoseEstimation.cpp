@@ -54,5 +54,5 @@ void detect_2d_points(cv::Mat img) {
 		break;
 	}
 	imgTex.set(img);
-	solve_head_pos(Mat(img_points), img);
+	if (!img_points.empty()) solve_head_pos(Mat(img_points), img);
 }
