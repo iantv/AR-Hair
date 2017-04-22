@@ -227,7 +227,7 @@ void solve_head_pos(Mat& ip, Mat& img) {
 		0, max_d, img.rows / 2.0,
 		0, 0, 1.0);
 	double _dc[] = { 0,0,0,0 };
-	if (!solvePnP(op, ip, cam_mat, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, false, SOLVEPNP_EPNP)) {
+	if (!solvePnP(op, ip, cam_mat, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, SOLVEPNP_EPNP)) {
 		cout << "solvePnP was fail" << endl;
 	}
 	
