@@ -13,3 +13,4 @@ HeadPosPnP/*
 Release/*
 *.exe
 *.rar
+VirtualHairStyle/shape_predictor_68_face_landmarks.dat
