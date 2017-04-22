@@ -140,12 +140,16 @@ void myGLinit() {
 	glLoadIdentity();
 }
 
+#include <ctime>
 void display(void)
 {	
 	Mat frame;
+	bool wasReadNewFrame = false;
+	clock_t t1 = clock();
 	if (capture.isOpened()) {
 		if (!stopReadFrame &&/* readFrame &&*/ capture.read(frame)) { // while
 			readFrame = false;
+			wasReadNewFrame = true;
 			if (!frame.empty()) {
 				detect_2d_points(frame);
 			} else {
@@ -190,6 +194,9 @@ void display(void)
 	glViewport(0, 0, vPort[2], vPort[3]); 
 	
 	glutSwapBuffers();
+	if (wasReadNewFrame) {
+		printf("fps %f ", 1/(float(clock() - t1) / CLOCKS_PER_SEC));
+	}
 }
 
 void init_opengl(int argc, char** argv) {
