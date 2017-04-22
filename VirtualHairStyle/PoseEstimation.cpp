@@ -30,7 +30,7 @@ void add_point(std::vector<cv::Point2d> &img_points, const dlib::full_object_det
 	img_points.push_back(cv::Point2d(d.part(idx).x(), d.part(idx).y()));
 }
 
-void detect_2d_points(cv::Mat img) {
+void detect_2d_points(cv::Mat &img) {
 	std::vector<cv::Point2d> img_points;
 	dlib::cv_image<dlib::bgr_pixel> cimg(img);	
 	
