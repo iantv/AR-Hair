@@ -30,15 +30,28 @@ void add_point(std::vector<cv::Point2d> &img_points, const dlib::full_object_det
 	img_points.push_back(cv::Point2d(d.part(idx).x(), d.part(idx).y()));
 }
 
+#define FACE_DOWNSAMPLE_RATIO 2.5
+
 void detect_2d_points(cv::Mat &img) {
 	std::vector<cv::Point2d> img_points;
+
+	cv::Mat img_small;
+	cv::resize(img, img_small, cv::Size(), 1.0 / FACE_DOWNSAMPLE_RATIO, 1.0 / FACE_DOWNSAMPLE_RATIO);
+
 	dlib::cv_image<dlib::bgr_pixel> cimg(img);	
-	
-	std::vector<dlib::rectangle> faces = detector(cimg);
+	dlib::cv_image<dlib::bgr_pixel> cimg_small(img_small);
+
+	std::vector<dlib::rectangle> faces = detector(cimg_small);
 	std::vector<dlib::full_object_detection> shapes;
 
 	for (unsigned long i = 0; i < faces.size(); ++i) {
-		dlib::full_object_detection shape = pose_model(cimg, faces[i]);
+		dlib::rectangle r(
+			(long)(faces[i].left() * FACE_DOWNSAMPLE_RATIO),
+			(long)(faces[i].top() * FACE_DOWNSAMPLE_RATIO),
+			(long)(faces[i].right() * FACE_DOWNSAMPLE_RATIO),
+			(long)(faces[i].bottom() * FACE_DOWNSAMPLE_RATIO)
+		);
+		dlib::full_object_detection shape = pose_model(cimg, r);
 		shapes.push_back(shape);
 		render_face(img, shape);
 		add_point(img_points, shape, 8); // chin
