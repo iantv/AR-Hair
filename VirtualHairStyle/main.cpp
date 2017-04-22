@@ -58,8 +58,10 @@ int main(int argc, char **argv) {
 	//capture.open(1);
 	/*capture.open("C:\\Users\\iantv\\Videos\\gagara.mp4");
 	capture.set(CV_CAP_PROP_POS_MSEC, 360000);*/
-	capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
-	capture.set(CV_CAP_PROP_POS_MSEC, 225000);
+	//capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
+	//capture.set(CV_CAP_PROP_POS_MSEC, 225000);
+	capture.open("C:\\Users\\iantv\\Videos\\i.avi");
+	//capture.set(CV_CAP_PROP_POS_MSEC, 225000)
 
 	detector = dlib::get_frontal_face_detector();
 	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> pose_model;
