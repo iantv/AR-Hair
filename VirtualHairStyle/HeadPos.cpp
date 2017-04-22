@@ -200,7 +200,7 @@ void display(void)
 }
 
 void init_opengl(int argc, char** argv) {
-	glutInitWindowSize(1024,640);
+	glutInitWindowSize(800, 600);
     glutInitWindowPosition(100, 0);
 	
     glutInit(&argc, argv);
