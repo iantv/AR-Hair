@@ -53,7 +53,7 @@ void detect_2d_points(cv::Mat &img) {
 		);
 		dlib::full_object_detection shape = pose_model(cimg, r);
 		shapes.push_back(shape);
-		render_face(img, shape);
+		//render_face(img, shape);
 		add_point(img_points, shape, 8); // chin
 		add_point(img_points, shape, 30); // nose
 		add_point(img_points, shape, 48); // left lip
