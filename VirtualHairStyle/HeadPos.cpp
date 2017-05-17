@@ -185,8 +185,9 @@ void display(void)
 	glMultMatrixd(_d);
 	
 	// draw the 3D head model
-	glColor4f(1, 1, 1, 0.5);
+	glColor4f(1, 1, 1, 0);
 	glmDraw(head_obj, GLM_SMOOTH);
+	glColor4f(1, 0.2, 0, 1); // color for hair + alfa == 1
 	glmDraw(hair_obj, GLM_SMOOTH | GLM_TEXTURE);
 
 	glPopMatrix();
