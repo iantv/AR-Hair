@@ -151,7 +151,9 @@ void display(void)
 			readFrame = false;
 			wasReadNewFrame = true;
 			if (!frame.empty()) {
-				detect_2d_points(frame);
+				Mat flipFrame;
+				cv::flip(frame, flipFrame, 1);
+				detect_2d_points(flipFrame);
 			} else {
 				printf(" --(!) No captured frame -- Break!"); //break;
 			}
