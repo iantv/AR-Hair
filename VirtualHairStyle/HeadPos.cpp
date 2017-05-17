@@ -187,6 +187,7 @@ void display(void)
 	// draw the 3D head model
 	glColor4f(1, 1, 1, 0.5);
 	glmDraw(head_obj, GLM_SMOOTH);
+	glmDraw(hair_obj, GLM_SMOOTH | GLM_TEXTURE);
 
 	glPopMatrix();
 	

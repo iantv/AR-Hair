@@ -9,6 +9,7 @@ extern std::vector<double> rv, tv;
 extern cv::Mat rvec, tvec;
 extern cv::Mat cam_mat;
 extern GLMmodel* head_obj;
+extern GLMmodel* hair_obj;
 extern cv::Mat op;
 extern OpenCVGLTexture imgTex;
 

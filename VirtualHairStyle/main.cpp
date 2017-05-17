@@ -8,6 +8,8 @@ using namespace std;
 using namespace cv;
 
 GLMmodel* head_obj;
+GLMmodel* hair_obj;
+
 std::vector<double> rv(3), tv(3);
 cv::Mat rvec(rv), tvec(tv);
 OpenCVGLTexture imgTex;
@@ -30,7 +32,7 @@ int main(int argc, char **argv) {
 	modelPoints.push_back(Point3f(118.77664, 123.52014, -84.70152)); // right ear
 
 	head_obj = glmReadOBJ("head-obj.obj");
-
+	hair_obj = glmReadOBJ("hair.obj");
 	op = Mat(modelPoints);
 	/*Scalar m = mean(Mat(modelPoints));
 	//op = op - m;
@@ -55,12 +57,12 @@ int main(int argc, char **argv) {
 	// prepare OpenCV-OpenGL images
 	imgTex = MakeOpenCVGLTexture(Mat());
 
-	//capture.open(1);
+	capture.open(1);
 	/*capture.open("C:\\Users\\iantv\\Videos\\gagara.mp4");
 	capture.set(CV_CAP_PROP_POS_MSEC, 360000);*/
-	//capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
-	//capture.set(CV_CAP_PROP_POS_MSEC, 225000);
-	capture.open("C:\\Users\\iantv\\Videos\\i.avi");
+	/*capture.open("C:\\Users\\iantv\\Videos\\Lipnitskaya.mp4");
+	capture.set(CV_CAP_PROP_POS_MSEC, 225000);*/
+	//capture.open("C:\\Users\\iantv\\Videos\\i.avi");
 	//capture.set(CV_CAP_PROP_POS_MSEC, 225000)
 
 	detector = dlib::get_frontal_face_detector();
