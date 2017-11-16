@@ -9,6 +9,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include <FaceDetector.h>
+
 class VideoPlayer : public QThread
 {
     Q_OBJECT
@@ -31,6 +33,7 @@ private:
     cv::VideoCapture _capture;
     cv::Mat _rgbFrame;
     QImage _image;
+    FaceDetector *_detector;
 };
 
 #endif // VIDEOPLAYER_H

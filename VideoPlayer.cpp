@@ -5,6 +5,7 @@
 VideoPlayer::VideoPlayer(QObject *parent, unsigned int camIdx) : QThread(parent) {
     _stop = true;
     _camIdx = camIdx;
+    _detector = new FaceDetector();
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -32,8 +33,13 @@ void VideoPlayer::run() {
             _stop = true;
         }
         if (_frame.channels()== 3) {
-            cv::cvtColor(_frame, _rgbFrame, CV_BGR2RGB);
-            cv::flip(_rgbFrame, _rgbFrame, 1);
+            cv::Mat temp;
+            cv::cvtColor(_frame, temp, CV_BGR2RGB);
+            cv::flip(temp, _rgbFrame, 1);
+
+            std::vector<cv::Point2d> imgPoints;
+            _detector->find2DKeyPoints(_rgbFrame, imgPoints);
+
             _image = QImage((const unsigned char*)(_rgbFrame.data),
                             _rgbFrame.cols, _rgbFrame.rows, QImage::Format_RGB888);
         } else {
