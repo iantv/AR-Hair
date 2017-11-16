@@ -21,6 +21,10 @@ FaceDetector::FaceDetector() {
     }
 }
 
+FaceDetector::~FaceDetector() {
+    _keyPoints.clear();
+}
+
 std::vector<dlib::rectangle> FaceDetector::detect(cv::Mat &image) {
     cv::Mat img_small;
     cv::resize(image, img_small, cv::Size(), 1.0 / FACE_DOWNSAMPLE_RATIO, 1.0 / FACE_DOWNSAMPLE_RATIO);
