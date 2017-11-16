@@ -4,7 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow) {
     _vplayer = new VideoPlayer();
-    QObject::connect(_vplayer, SIGNAL(processedImage(QImage)), this, SLOT(updatePlayerUi(QImage)));
+    QObject::connect(_vplayer, SIGNAL(processedImage(const QImage &)), this, SLOT(updatePlayerUi(const QImage &)));
     _ui->setupUi(this);
 }
 
@@ -13,7 +13,7 @@ MainWindow::~MainWindow() {
     delete _ui;
 }
 
-void MainWindow::updatePlayerUi(QImage image) {
+void MainWindow::updatePlayerUi(const QImage &image) {
     if (!image.isNull()) {
         _ui->label->setAlignment(Qt::AlignCenter);
         _ui->label->setPixmap(QPixmap::fromImage(image).scaled(_ui->label->size(),

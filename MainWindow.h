@@ -19,7 +19,7 @@ public:
     ~MainWindow();
     void show();
 private slots:
-    void updatePlayerUi(QImage img);
+    void updatePlayerUi(const QImage &image);
 private:
     Ui::MainWindow *_ui;
     VideoPlayer *_vplayer;
