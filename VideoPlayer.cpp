@@ -21,7 +21,7 @@ void VideoPlayer::play() {
         if (this->isStopped()) {
             _stop = false;
         }
-        _capture.open(0);
+        _capture.open(_camIdx);
         this->start(LowPriority);
     }
 }
