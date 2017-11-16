@@ -10,6 +10,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <FaceDetector.h>
+class PoseEstimation;
 
 class VideoPlayer : public QThread
 {
@@ -25,6 +26,7 @@ protected:
 signals:
     void processedImage(const QImage &image);
 private:
+    void drawBasis(std::vector<cv::Point2d> &imgPoints);
     bool _stop;
     unsigned int _camIdx;
     QMutex _mutex;
@@ -34,6 +36,7 @@ private:
     cv::Mat _rgbFrame;
     QImage _image;
     FaceDetector *_detector;
+    PoseEstimation *_poseEstimator;
 };
 
 #endif // VIDEOPLAYER_H

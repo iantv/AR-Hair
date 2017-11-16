@@ -26,12 +26,14 @@ SOURCES += \
         main.cpp \
         MainWindow.cpp \
     VideoPlayer.cpp \
-    FaceDetector.cpp
+    FaceDetector.cpp \
+    PoseEstimation.cpp
 
 HEADERS += \
         MainWindow.h \
     VideoPlayer.h \
-    FaceDetector.h
+    FaceDetector.h \
+    PoseEstimation.h
 
 FORMS += \
         MainWindow.ui
