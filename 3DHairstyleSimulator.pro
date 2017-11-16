@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-    VideoPlayer.cpp
+    VideoPlayer.cpp \
+    FaceDetector.cpp
 
 HEADERS += \
         MainWindow.h \
-    VideoPlayer.h
+    VideoPlayer.h \
+    FaceDetector.h
 
 FORMS += \
         MainWindow.ui
