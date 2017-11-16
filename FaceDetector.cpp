@@ -1,11 +1,13 @@
 #include "FaceDetector.h"
 #include <opencv2/imgproc.hpp>
+#include <QtCore>
 
 #define FACE_DOWNSAMPLE_RATIO 1.5
 
 FaceDetector::FaceDetector() {
     _detector = dlib::get_frontal_face_detector();
-    dlib::deserialize("C:\\Users\\Tatiana\\Documents\\Qt\\Projects\\TestOpenCV\\shape_predictor_68_face_landmarks.dat") >> _poseModel;
+    QString t = QDir::currentPath() + "/shape_predictor_68_face_landmarks.dat";
+    dlib::deserialize(t.toStdString().c_str()) >> _poseModel;
 
     int PT_CHIN = 8;
     int PT_NOSE = 30;
