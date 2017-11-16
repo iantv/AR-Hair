@@ -28,7 +28,6 @@ private:
     QMutex _mutex;
     QWaitCondition _condition;
     cv::Mat _frame;
-    int _frameRate;
     cv::VideoCapture _capture;
     cv::Mat _rgbFrame;
     QImage _image;

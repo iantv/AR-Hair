@@ -27,7 +27,6 @@ void VideoPlayer::play() {
 }
 
 void VideoPlayer::run() {
-    int delay = (1000/_frameRate);
     while(!_stop) {
         if (!_capture.read(_frame)) {
             _stop = true;
@@ -42,7 +41,7 @@ void VideoPlayer::run() {
                          _frame.cols,_frame.rows,QImage::Format_Indexed8);
         }
         emit this->processedImage(_image);
-        cv::waitKey(delay);
+        cv::waitKey(30);
     }
 }
 
