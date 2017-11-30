@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,13 +27,15 @@ SOURCES += \
         MainWindow.cpp \
     VideoPlayer.cpp \
     FaceDetector.cpp \
-    PoseEstimation.cpp
+    PoseEstimation.cpp \
+    Graphics/Base3DModel.cpp
 
 HEADERS += \
         MainWindow.h \
     VideoPlayer.h \
     FaceDetector.h \
-    PoseEstimation.h
+    PoseEstimation.h \
+    Graphics/Base3DModel.h
 
 FORMS += \
         MainWindow.ui
