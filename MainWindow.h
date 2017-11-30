@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <VideoPlayer.h>
+#include <Graphics/GLWidget.h>
 
 #include <QMainWindow>
 
@@ -23,6 +24,7 @@ private slots:
 private:
     Ui::MainWindow *_ui;
     VideoPlayer *_vplayer;
+    GLWidget *_glWidget;
 };
 
 #endif // MAINWINDOW_H
