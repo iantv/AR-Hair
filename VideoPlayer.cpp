@@ -33,32 +33,14 @@ void VideoPlayer::play() {
 }
 
 void VideoPlayer::run() {
-    while(!_stop) {
-        if (!_capture.read(_frame)) {
-            _stop = true;
-        }
-        if (_frame.channels()== 3) {
-            cv::Mat temp;
-            cv::cvtColor(_frame, temp, CV_BGR2RGB);
-            cv::flip(temp, _rgbFrame, 1);
-
-            std::vector<cv::Point2d> imgPoints;
-            _detector->find2DKeyPoints(_rgbFrame, imgPoints);
-
-            if (imgPoints.size() == 8) {
-                _poseEstimator->addImagePoints(imgPoints);
-                _poseEstimator->solve(_rgbFrame);
-                this->drawBasis(imgPoints);
-            }
-
-            _image = QImage((const unsigned char*)(_rgbFrame.data),
-                            _rgbFrame.cols, _rgbFrame.rows, QImage::Format_RGB888);
-        } else {
-            _image = QImage((const unsigned char*)(_frame.data),
-                         _frame.cols,_frame.rows,QImage::Format_Indexed8);
-        }
+    cv::Mat frame;
+    while(_capture.read(frame)) {
+        cv::Mat rgbFrame;
+        cv::cvtColor(frame, rgbFrame, CV_BGR2RGB);
+        this->poseEstimate(frame.channels() == 3 ? rgbFrame : frame,
+                           frame.channels() == 3 ? QImage::Format_RGB888 : QImage::Format_Indexed8);
         emit this->processedImage(_image);
-        cv::waitKey(30);
+        this->msleep(10);
     }
 }
 

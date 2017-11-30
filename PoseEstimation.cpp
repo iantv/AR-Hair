@@ -4,11 +4,11 @@
 
 PoseEstimation::PoseEstimation() {
    this->initObjPoints();
-    rv.resize(3);
-    tv.resize(3);
+    _rv.resize(3);
+    _tv.resize(3);
 
-   _tvec = cv::Mat(tv);
-   _rvec = cv::Mat(rv);
+   _tvec = cv::Mat(_tv);
+   _rvec = cv::Mat(_rv);
    _rmat = cv::Mat(3, 3, CV_64FC1, _d);
    cv::Rodrigues(_rmat, _rvec);
 }
@@ -33,15 +33,13 @@ void PoseEstimation::addImagePoints(std::vector<cv::Point2d> &imagePoints) {
     _imgPoints = cv::Mat(imagePoints);
 }
 
-void PoseEstimation::solve(cv::Mat &image) {
-    int maxD = MAX(image.rows, image.cols);
-    cv::Mat camMat = (cv::Mat_<double>(3, 3) << maxD, 0, image.cols / 2.0,
-        0, maxD, image.rows / 2.0,
-        0, 0, 1.0);
-    double distCoeffs[] = { 0,0,0,0 };
+void PoseEstimation::solve(cv::Mat &image, std::vector<cv::Point2d> &imagePoints) {
+    CameraParams cam(image);
     this->initObjPoints();
-    if (!cv::solvePnP(_objPoints, _imgPoints, camMat, cv::Mat(1, 4, CV_64FC1, distCoeffs), _rvec, _tvec, true, cv::SOLVEPNP_EPNP)) {
+    _imgPoints = cv::Mat(imagePoints);
+    if (!cv::solvePnP(_objPoints, _imgPoints, cam.cmat, cv::Mat(1, 4, CV_64FC1, cam.distCoeffs), _rvec, _tvec, true, cv::SOLVEPNP_EPNP)) {
         std::cout << "solvePnP was fail" << std::endl;
+        return;
     }
     cv::Rodrigues(_rvec, _rmat);
 }

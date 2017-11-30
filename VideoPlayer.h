@@ -26,16 +26,15 @@ protected:
 signals:
     void processedImage(const QImage &image);
 private:
+    void poseEstimate(cv::Mat &frame, QImage::Format format);
     void drawBasis(std::vector<cv::Point2d> &imgPoints);
     bool _stop;
-    unsigned int _camIdx;
-    QMutex _mutex;
-    QWaitCondition _condition;
-    cv::Mat _frame;
-    cv::VideoCapture _capture;
-    cv::Mat _rgbFrame;
     QImage _image;
+    unsigned int _camIdx;
     FaceDetector *_detector;
+    cv::VideoCapture _capture;
+    QWaitCondition _condition;
+    QMutex _mutex;
     PoseEstimation *_poseEstimator;
 };
 
