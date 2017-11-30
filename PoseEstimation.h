@@ -12,6 +12,8 @@ public:
     cv::Mat getRotationMatrix() const;
     cv::Mat getRotationVector() const;
     cv::Mat getTranslationVector() const;
+protected:
+    void drawBasis(cv::Mat &image, std::vector<cv::Point2d> &imagePoints);
 private:
     struct CameraParams {
         CameraParams(cv::Mat &image) {

@@ -41,6 +41,7 @@ void PoseEstimation::solve(cv::Mat &image, std::vector<cv::Point2d> &imagePoints
         std::cout << "solvePnP was fail" << std::endl;
         return;
     }
+    this->drawBasis(image, imagePoints);
     cv::Rodrigues(_rvec, _rmat);
 }
 
@@ -54,4 +55,22 @@ cv::Mat PoseEstimation::getRotationVector() const {
 
 cv::Mat PoseEstimation::getTranslationVector() const {
     return this->_tvec;
+}
+
+void PoseEstimation::drawBasis(cv::Mat &image, std::vector<cv::Point2d> &imagePoints) {
+    CameraParams cam(image);
+
+    std::vector<cv::Point3d> nose_end_point3D;
+    std::vector<cv::Point2d> nose_end_point2D;
+
+    nose_end_point3D.push_back(cv::Point3d(0.0, 0.0, 100.0));
+    nose_end_point3D.push_back(cv::Point3d(0.0, 100.0, 0.0));
+    nose_end_point3D.push_back(cv::Point3d(100.0, 0.0, 0.0));
+
+    cv::projectPoints(nose_end_point3D, _rvec, _tvec, cam.cmat,
+                      cv::Mat(1, 4, CV_64FC1, cam.distCoeffs), nose_end_point2D);
+
+    cv::line(image, imagePoints[1], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2); //blue z
+    cv::line(image, imagePoints[1], nose_end_point2D[1], cv::Scalar(0, 255, 0), 2); //green y
+    cv::line(image, imagePoints[1], nose_end_point2D[2], cv::Scalar(0, 0, 255), 2); //red x
 }
