@@ -23,15 +23,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp \
-        MainWindow.cpp \
+    main.cpp \
+    MainWindow.cpp \
     VideoPlayer.cpp \
     FaceDetector.cpp \
     PoseEstimation.cpp \
     Graphics/Base3DModel.cpp
 
 HEADERS += \
-        MainWindow.h \
+    MainWindow.h \
     VideoPlayer.h \
     FaceDetector.h \
     PoseEstimation.h \
