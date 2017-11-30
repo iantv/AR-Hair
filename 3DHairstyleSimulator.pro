@@ -28,6 +28,7 @@ SOURCES += \
     VideoPlayer.cpp \
     FaceDetector.cpp \
     PoseEstimation.cpp \
+    Graphics/GLWidget.cpp \
     Graphics/Base3DModel.cpp
 
 HEADERS += \
@@ -35,6 +36,7 @@ HEADERS += \
     VideoPlayer.h \
     FaceDetector.h \
     PoseEstimation.h \
+    Graphics/GLWidget.h \
     Graphics/Base3DModel.h
 
 FORMS += \
