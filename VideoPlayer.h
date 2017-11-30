@@ -19,16 +19,12 @@ public:
     explicit VideoPlayer(QObject *parent = nullptr, unsigned int camIdx = 0);
     ~VideoPlayer();
     void play();
-    void stop();
-    bool isStopped() const;
 protected:
     void run();
 signals:
     void processedImage(const QImage &image);
 private:
     void poseEstimate(cv::Mat &frame, QImage::Format format);
-    void drawBasis(std::vector<cv::Point2d> &imgPoints);
-    bool _stop;
     QImage _image;
     unsigned int _camIdx;
     FaceDetector *_detector;
