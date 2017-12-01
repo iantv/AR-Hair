@@ -1,20 +1,5 @@
 #include "ModelRendering.h"
-
-static const char *vertexShaderSource =
-    "attribute vec4 vertex;\n"
-    "attribute vec2 v_uvs;\n"
-    "varying vec2 f_uvs;\n"
-    "void main() {\n"
-    "   f_uvs = v_uvs;\n"
-    "   gl_Position = vertex;\n"
-    "}\n";
-
-static const char *fragmentShaderSource =
-    "uniform sampler2D texture;"
-    "varying highp vec2 f_uvs;"
-    "void main() {\n"
-    "   gl_FragColor = texture2D(texture, f_uvs);\n"
-    "}\n";
+#include <QDir>
 
 ModelRendering::ModelRendering() {
     _texture = nullptr;
@@ -32,8 +17,8 @@ ModelRendering::~ModelRendering() {
 
 void ModelRendering::init() {
     _program = new QOpenGLShaderProgram;
-    _program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
-    _program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
+    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + "/shaders/background.vert");
+    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + "/shaders/background.frag");
     _program->bindAttributeLocation("vertex", (GLuint)VBO_VERTICES);
     _program->bindAttributeLocation("v_uvs", (GLuint)VBO_TEXCOORS);
     _program->link();
