@@ -12,6 +12,7 @@ ModelRendering::~ModelRendering() {
     delete _program;
     if (_texture != nullptr) {
         _texture->destroy();
+        delete _texture;
     }
 }
 
@@ -70,7 +71,9 @@ void ModelRendering::updateTexture(const QImage &image) {
     if (_vao.isCreated()) {
         _vao.bind();
         if (_texture != nullptr) {
+            _texture->destroy();
             delete _texture;
+            _texture = nullptr;
         }
         _texture = new QOpenGLTexture(image);
     }
