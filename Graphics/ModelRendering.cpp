@@ -53,17 +53,13 @@ void ModelRendering::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) 
 void ModelRendering::render() {
     QOpenGLVertexArrayObject::Binder vaoBinder(&_vao);
     _program->bind();
-    if (_texture != nullptr) {
-        _texture->bind();
-    }
+    this->textureBind(_texture);
 
     this->setupVertexAttribs(&_vbo, _model);
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glDrawArrays(GL_TRIANGLES, 0, _model->vertexCount());
 
-    if (_texture != nullptr) {
-        _texture->release();
-    }
+    this->textureRelease(_texture);
     _program->release();
 }
 
@@ -76,5 +72,17 @@ void ModelRendering::updateTexture(const QImage &image) {
             _texture = nullptr;
         }
         _texture = new QOpenGLTexture(image);
+    }
+}
+
+void ModelRendering::textureBind(QOpenGLTexture *texture) {
+    if (texture != nullptr) {
+        texture->bind();
+    }
+}
+
+void ModelRendering::textureRelease(QOpenGLTexture *texture) {
+    if (texture != nullptr) {
+        texture->release();
     }
 }

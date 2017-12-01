@@ -20,6 +20,8 @@ public:
     void updateTexture(const QImage &image);
 private:
     void setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model);
+    void textureBind(QOpenGLTexture *texture);
+    void textureRelease(QOpenGLTexture *texture);
     bool _core;
     Base3DModel *_model;
     QOpenGLShaderProgram *_program;
