@@ -56,25 +56,25 @@ void GLWidget::initializeGL() {
     _bgVBO.create();
     _bgVBO.bind();
     _bgVBO.allocate(_bgImageModel.data(), _bgImageModel.sizeData() * sizeof(GLfloat));
-    this->setupVertexAttribs();
+    this->setupVertexAttribs(&_bgVBO, &_bgImageModel);
     _camera.setToIdentity();
     _camera.translate(0, 0, -1);
     _bgProgram->release();
 }
 
-void GLWidget::setupVertexAttribs()
+void GLWidget::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model)
 {
-    _bgVBO.bind();
+    vbo->bind();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glEnableVertexAttribArray((GLuint)VBO_VERTICES);
     f->glEnableVertexAttribArray((GLuint)VBO_TEXCOORS);
-    f->glVertexAttribPointer((GLuint)VBO_VERTICES, _bgImageModel._size[VBO_VERTICES],
-                             GL_FLOAT, GL_FALSE, _bgImageModel._count * sizeof(GLfloat),
-                             reinterpret_cast<void *>(_bgImageModel._indx[VBO_VERTICES] * sizeof(GLfloat)));
-    f->glVertexAttribPointer((GLuint)VBO_TEXCOORS, _bgImageModel._size[VBO_TEXCOORS],
-                             GL_FLOAT, GL_FALSE, _bgImageModel._count * sizeof(GLfloat),
-                             reinterpret_cast<void *>(_bgImageModel._indx[VBO_TEXCOORS] * sizeof(GLfloat)));
-    _bgVBO.release();
+    f->glVertexAttribPointer((GLuint)VBO_VERTICES, model->_size[VBO_VERTICES],
+                             GL_FLOAT, GL_FALSE, model->_count * sizeof(GLfloat),
+                             reinterpret_cast<void *>(model->_indx[VBO_VERTICES] * sizeof(GLfloat)));
+    f->glVertexAttribPointer((GLuint)VBO_TEXCOORS, model->_size[VBO_TEXCOORS],
+                             GL_FLOAT, GL_FALSE, model->_count * sizeof(GLfloat),
+                             reinterpret_cast<void *>(model->_indx[VBO_TEXCOORS] * sizeof(GLfloat)));
+    vbo->release();
 }
 
 void GLWidget::paintGL() {
@@ -89,7 +89,7 @@ void GLWidget::paintGL() {
         _bgTex->bind();
     }
 
-    this->setupVertexAttribs();
+    this->setupVertexAttribs(&_bgVBO, &_bgImageModel);
 
     glDrawArrays(GL_TRIANGLES, 0, _bgImageModel.vertexCount());
 

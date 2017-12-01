@@ -24,7 +24,7 @@ protected:
 public slots:
     void cleanup();
 private:
-    void setupVertexAttribs();
+    void setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model);
     QMatrix4x4 _camera;
     bool _core;
     QMatrix4x4 _proj;
