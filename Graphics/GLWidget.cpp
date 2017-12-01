@@ -7,7 +7,6 @@ bool GLWidget::_transparent = false;
 GLWidget::GLWidget(QWidget *parent) :
     QOpenGLWidget(parent) {
     _background = new ModelRendering();
-    //_core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
     if (_transparent) {
         QSurfaceFormat fmt = format();
         fmt.setAlphaBufferSize(8);
