@@ -7,9 +7,10 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QImage>
-#include <QPainter>
-#include <Graphics/Base3DModel.h>
+//#include <QPainter>
 #include <QOpenGLTexture>
+#include <Graphics/ModelRendering.h>
+#include <Graphics/Base3DModel.h>
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -24,16 +25,11 @@ protected:
 public slots:
     void cleanup();
 private:
-    void setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model);
     QMatrix4x4 _camera;
     bool _core;
     QMatrix4x4 _proj;
     static bool _transparent;
-    Base3DModel _bgImageModel;
-    QOpenGLShaderProgram *_bgProgram;
-    QOpenGLTexture *_bgTex;
-    QOpenGLVertexArrayObject _bgVAO;
-    QOpenGLBuffer _bgVBO;
+    ModelRendering *_background;
 };
 
 #endif // GLWIDGET_H

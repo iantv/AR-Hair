@@ -29,7 +29,8 @@ SOURCES += \
     FaceDetector.cpp \
     PoseEstimation.cpp \
     Graphics/GLWidget.cpp \
-    Graphics/Base3DModel.cpp
+    Graphics/Base3DModel.cpp \
+    Graphics/ModelRendering.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -37,7 +38,8 @@ HEADERS += \
     FaceDetector.h \
     PoseEstimation.h \
     Graphics/GLWidget.h \
-    Graphics/Base3DModel.h
+    Graphics/Base3DModel.h \
+    Graphics/ModelRendering.h
 
 FORMS += \
         MainWindow.ui
