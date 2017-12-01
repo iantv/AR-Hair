@@ -26,7 +26,6 @@ public slots:
     void cleanup();
 private:
     QMatrix4x4 _camera;
-    bool _core;
     QMatrix4x4 _proj;
     static bool _transparent;
     ModelRendering *_background;

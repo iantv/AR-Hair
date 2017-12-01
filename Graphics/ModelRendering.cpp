@@ -18,6 +18,7 @@ static const char *fragmentShaderSource =
 
 ModelRendering::ModelRendering() {
     _texture = nullptr;
+    _core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
     _model = new Base3DModel("3D models/background.obj");
 }
 
