@@ -4,7 +4,6 @@
 ModelRendering::ModelRendering() {
     _texture = nullptr;
     _core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
-    _model = new Base3DModel("3D models/background.obj");
 }
 
 ModelRendering::~ModelRendering() {
@@ -18,10 +17,9 @@ ModelRendering::~ModelRendering() {
 
 void ModelRendering::init() {
     _program = new QOpenGLShaderProgram;
-    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + "/shaders/background.vert");
-    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + "/shaders/background.frag");
-    _program->bindAttributeLocation("vertex", (GLuint)VBO_VERTICES);
-    _program->bindAttributeLocation("v_uvs", (GLuint)VBO_TEXCOORS);
+    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + _shaderVertPath);
+    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + _shaderFragPath);
+    this->bindAttributes();
     _program->link();
 
     _program->bind();
@@ -39,14 +37,12 @@ void ModelRendering::init() {
 void ModelRendering::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) {
     vbo->bind();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
-    f->glEnableVertexAttribArray((GLuint)VBO_VERTICES);
-    f->glEnableVertexAttribArray((GLuint)VBO_TEXCOORS);
-    f->glVertexAttribPointer((GLuint)VBO_VERTICES, model->_size[VBO_VERTICES],
-                             GL_FLOAT, GL_FALSE, model->_count * sizeof(GLfloat),
-                             reinterpret_cast<void *>(model->_indx[VBO_VERTICES] * sizeof(GLfloat)));
-    f->glVertexAttribPointer((GLuint)VBO_TEXCOORS, model->_size[VBO_TEXCOORS],
-                             GL_FLOAT, GL_FALSE, model->_count * sizeof(GLfloat),
-                             reinterpret_cast<void *>(model->_indx[VBO_TEXCOORS] * sizeof(GLfloat)));
+    for (int i = 0; i < _attrName.size(); i++) {
+        f->glEnableVertexAttribArray((GLuint)i);
+        f->glVertexAttribPointer((GLuint)i, model->_size[i],
+                                 GL_FLOAT, GL_FALSE, model->_count * sizeof(GLfloat),
+                                 reinterpret_cast<void *>(model->_indx[i] * sizeof(GLfloat)));
+    }
     vbo->release();
 }
 
@@ -85,4 +81,20 @@ void ModelRendering::textureRelease(QOpenGLTexture *texture) {
     if (texture != nullptr) {
         texture->release();
     }
+}
+
+void ModelRendering::bindAttributes() {
+    for (int i = 0; i < _attrName.size(); i++)
+        _program->bindAttributeLocation(_attrName[i], (GLuint)i);
+}
+
+BackgroundRendering::BackgroundRendering() : ModelRendering::ModelRendering() {
+    _model = new Base3DModel("3D models/background.obj");
+    _shaderVertPath = "/shaders/background.vert";
+    _shaderFragPath = "/shaders/background.frag";
+    _attrName << "vertex" << "v_uvs";
+}
+
+BackgroundRendering::~BackgroundRendering() {
+
 }

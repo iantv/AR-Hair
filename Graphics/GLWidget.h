@@ -28,7 +28,7 @@ private:
     QMatrix4x4 _camera;
     QMatrix4x4 _proj;
     static bool _transparent;
-    ModelRendering *_background;
+    BackgroundRendering *_background;
 };
 
 #endif // GLWIDGET_H
