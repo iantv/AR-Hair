@@ -34,7 +34,7 @@ void VideoPlayer::run() {
         this->poseEstimate(frame.channels() == 3 ? rgbFrame : frame,
                            frame.channels() == 3 ? QImage::Format_RGB888 : QImage::Format_Indexed8);
         emit this->processedImage(_image, _poseEstimator->getRotationMatrix(), _poseEstimator->getTranslationVector());
-        this->msleep(10);
+        this->msleep(30);
     }
 }
 
