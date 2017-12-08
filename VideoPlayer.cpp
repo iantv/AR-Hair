@@ -8,6 +8,7 @@ VideoPlayer::VideoPlayer(QObject *parent, unsigned int camIdx) : QThread(parent)
     _camIdx = camIdx;
     _poseEstimator = new PoseEstimation();
     _detector = new FaceDetector();
+    qRegisterMetaType<cv::Mat>();
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -32,7 +33,7 @@ void VideoPlayer::run() {
         cv::cvtColor(frame, rgbFrame, CV_BGR2RGB);
         this->poseEstimate(frame.channels() == 3 ? rgbFrame : frame,
                            frame.channels() == 3 ? QImage::Format_RGB888 : QImage::Format_Indexed8);
-        emit this->processedImage(_image);
+        emit this->processedImage(_image, _poseEstimator->getRotationMatrix(), _poseEstimator->getTranslationVector());
         this->msleep(10);
     }
 }

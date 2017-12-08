@@ -22,7 +22,7 @@ public:
 protected:
     void run();
 signals:
-    void processedImage(const QImage &image);
+    void processedImage(const QImage &image, cv::Mat rmat, cv::Mat tvec);
 private:
     void poseEstimate(cv::Mat &frame, QImage::Format format);
     QImage _image;
@@ -33,5 +33,5 @@ private:
     QMutex _mutex;
     PoseEstimation *_poseEstimator;
 };
-
+Q_DECLARE_METATYPE(cv::Mat);
 #endif // VIDEOPLAYER_H
