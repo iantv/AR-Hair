@@ -7,6 +7,7 @@ bool GLWidget::_transparent = false;
 GLWidget::GLWidget(QWidget *parent) :
     QOpenGLWidget(parent) {
     _background = new BackgroundRendering();
+    _hair = new HairRendering();
     if (_transparent) {
         QSurfaceFormat fmt = format();
         fmt.setAlphaBufferSize(8);
@@ -16,6 +17,7 @@ GLWidget::GLWidget(QWidget *parent) :
 
 GLWidget::~GLWidget() {
     delete _background;
+    delete _hair;
 }
 
 void GLWidget::initializeGL() {
@@ -23,7 +25,7 @@ void GLWidget::initializeGL() {
     initializeOpenGLFunctions();
 
     _background->init();
-
+    _hair->init();
 }
 
 void GLWidget::paintGL() {
@@ -31,14 +33,20 @@ void GLWidget::paintGL() {
     glClearColor(0, 0, 0, int(!_transparent));
 
     _background->render();
+    _hair->render();
 }
 
 void GLWidget::resizeGL(int width, int height) {
+    _hair->updateProjectionMatrix(GLfloat(width) / height);
 }
 
 void GLWidget::updateBackgroundImage(const QImage &image) {
     _background->updateTexture(image);
     this->update();
+}
+
+void GLWidget::updatePosition(cv::Mat &rmat, cv::Mat &tvec) {
+    _hair->updatePosition(rmat, tvec);
 }
 
 void GLWidget::cleanup()
