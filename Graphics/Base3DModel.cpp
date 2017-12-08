@@ -3,8 +3,7 @@
 
 #define uint unsigned int
 
-Base3DModel::Base3DModel() : _count(0)
-{
+Base3DModel::Base3DModel() : _count(0) {
 
 }
 
