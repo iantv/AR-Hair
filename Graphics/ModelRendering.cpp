@@ -107,7 +107,7 @@ BackgroundRendering::~BackgroundRendering() {
 
 HairRendering::HairRendering() : ModelRendering::ModelRendering() {
     _model = new Base3DModel("3D models/hair/hair_v1.obj");
-    _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png");
+    _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png").mirrored();
     _shaderVertPath = "/shaders/hair.vert";
     _shaderFragPath = "/shaders/hair.frag";
     _attrName << "vertex" << "v_uvs";
