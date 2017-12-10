@@ -2,20 +2,20 @@
 #include <QDir>
 
 ModelRendering::ModelRendering() {
-    _texture = nullptr;
     _core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
+}
+
+void ModelRendering::initData() {
+
 }
 
 ModelRendering::~ModelRendering() {
     delete _model;
     delete _program;
-    if (_texture != nullptr) {
-        _texture->destroy();
-        delete _texture;
-    }
 }
 
 void ModelRendering::init() {
+    this->initData();
     _program = new QOpenGLShaderProgram;
     _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + _shaderVertPath);
     _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + _shaderFragPath);
@@ -23,7 +23,7 @@ void ModelRendering::init() {
     _program->link();
 
     _program->bind();
-    _program->setUniformValue("texture", 0);
+    //_program->setUniformValue("texture", 0);
 
     _vao.create();
     QOpenGLVertexArrayObject::Binder vaoBinder(&_vao);
@@ -48,20 +48,23 @@ void ModelRendering::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) 
 
 void ModelRendering::render() {
     QOpenGLVertexArrayObject::Binder vaoBinder(&_vao);
-    _program->bind();
-
-    this->setUniformVariables();
-    this->setupVertexAttribs(&_vbo, _model);
-    this->textureBind(_texture);
-
+    this->bindAll();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glDrawArrays(GL_TRIANGLES, 0, _model->vertexCount());
+    this->releaseAll();
+}
 
-    this->textureRelease(_texture);
+void ModelRendering::bindAll() {
+    _program->bind();
+    this->setUniformVariables();
+    this->setupVertexAttribs(&_vbo, _model);
+}
+
+void ModelRendering::releaseAll() {
     _program->release();
 }
 
-void ModelRendering::updateTexture(const QImage &image) {
+void BackgroundRendering::updateTexture(const QImage &image) {
     if (_vao.isCreated()) {
         _vao.bind();
         if (_texture != nullptr) {
@@ -73,13 +76,13 @@ void ModelRendering::updateTexture(const QImage &image) {
     }
 }
 
-void ModelRendering::textureBind(QOpenGLTexture *texture) {
+void BackgroundRendering::textureBind(QOpenGLTexture *texture) {
     if (texture != nullptr) {
         texture->bind();
     }
 }
 
-void ModelRendering::textureRelease(QOpenGLTexture *texture) {
+void BackgroundRendering::textureRelease(QOpenGLTexture *texture) {
     if (texture != nullptr) {
         texture->release();
     }
@@ -95,17 +98,38 @@ void ModelRendering::setUniformVariables() {
 }
 
 BackgroundRendering::BackgroundRendering() : ModelRendering::ModelRendering() {
+    _texture = nullptr;
+}
+
+void BackgroundRendering::initData() {
     _model = new Base3DModel("3D models/background.obj");
     _shaderVertPath = "/shaders/background.vert";
     _shaderFragPath = "/shaders/background.frag";
     _attrName << "vertex" << "v_uvs";
 }
 
+void BackgroundRendering::bindAll() {
+    ModelRendering::bindAll();
+    this->textureBind(_texture);
+}
+
+void BackgroundRendering::releaseAll() {
+    this->textureRelease(_texture);
+    ModelRendering::releaseAll();
+}
+
 BackgroundRendering::~BackgroundRendering() {
+    if (_texture != nullptr) {
+        _texture->destroy();
+        delete _texture;
+    }
+}
+
+HairRendering::HairRendering() : BackgroundRendering::BackgroundRendering() {
 
 }
 
-HairRendering::HairRendering() : ModelRendering::ModelRendering() {
+void HairRendering::initData() {
     _model = new Base3DModel("3D models/hair/hair_v1.obj");
     _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png").mirrored();
     _shaderVertPath = "/shaders/hair.vert";

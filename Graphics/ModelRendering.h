@@ -19,17 +19,16 @@ public:
     virtual ~ModelRendering();
     virtual void init();
     void render();
-    void updateTexture(const QImage &image);
 protected:
+    virtual void bindAll();
+    virtual void releaseAll();
+    virtual void initData();
     void setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model);
-    virtual void textureBind(QOpenGLTexture *texture);
-    void textureRelease(QOpenGLTexture *texture);
     virtual void setUniformVariables();
     void bindAttributes();
     bool _core;
     Base3DModel *_model;
     QOpenGLShaderProgram *_program;
-    QOpenGLTexture *_texture;
     QOpenGLVertexArrayObject _vao;
     QOpenGLBuffer _vbo;
     QString _shaderVertPath;
@@ -42,9 +41,17 @@ class BackgroundRendering : public ModelRendering
 public:
     BackgroundRendering();
     ~BackgroundRendering();
+    void updateTexture(const QImage &image);
+protected:
+    void bindAll() override;
+    void releaseAll() override;
+    void initData() override;
+    void textureBind(QOpenGLTexture *texture);
+    void textureRelease(QOpenGLTexture *texture);
+    QOpenGLTexture *_texture;
 };
 
-class HairRendering : public ModelRendering
+class HairRendering : public BackgroundRendering
 {
 public:
     HairRendering();
@@ -55,6 +62,7 @@ public:
 protected:
     void setUniformVariables() override;
     QMatrix4x4 calcMVP();
+    void initData() override;
 private:
     QMatrix4x4 _projection;
     cv::Mat _rmat;
