@@ -30,7 +30,7 @@ SOURCES += \
     PoseEstimation.cpp \
     Graphics/GLWidget.cpp \
     Graphics/Base3DModel.cpp \
-    Graphics/ModelRendering.cpp
+    Graphics/BaseSceneObject.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -39,7 +39,7 @@ HEADERS += \
     PoseEstimation.h \
     Graphics/GLWidget.h \
     Graphics/Base3DModel.h \
-    Graphics/ModelRendering.h
+    Graphics/BaseSceneObject.h
 
 FORMS += \
         MainWindow.ui

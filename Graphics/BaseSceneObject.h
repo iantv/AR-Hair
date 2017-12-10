@@ -1,5 +1,5 @@
-#ifndef MODELRENDERING_H
-#define MODELRENDERING_H
+#ifndef BASESCENEOBJECT_H
+#define BASESCENEOBJECT_H
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
@@ -12,11 +12,11 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 
-class ModelRendering
+class BaseSceneObject
 {
 public:
-    ModelRendering();
-    virtual ~ModelRendering();
+    BaseSceneObject();
+    virtual ~BaseSceneObject();
     virtual void init();
     void render();
 protected:
@@ -36,11 +36,11 @@ protected:
     QVector<QString> _attrName;
 };
 
-class BackgroundRendering : public ModelRendering
+class BackgroundObject : public BaseSceneObject
 {
 public:
-    BackgroundRendering();
-    ~BackgroundRendering();
+    BackgroundObject();
+    ~BackgroundObject();
     void updateTexture(const QImage &image);
 protected:
     void bindAll() override;
@@ -51,11 +51,15 @@ protected:
     QOpenGLTexture *_texture;
 };
 
-class HairRendering : public BackgroundRendering
+enum TransformedObjectType {
+    HAIR, HEAD
+};
+
+class TransformedObject : public BackgroundObject
 {
 public:
-    HairRendering();
-    ~HairRendering();
+    TransformedObject(TransformedObjectType type);
+    ~TransformedObject();
     void updatePosition(cv::Mat &rmat, cv::Mat &tvec);
     void init() override;
     void updateProjectionMatrix(GLfloat aspect);
@@ -64,10 +68,11 @@ protected:
     QMatrix4x4 calcMVP();
     void initData() override;
 private:
+    TransformedObjectType _type;
     QMatrix4x4 _projection;
     cv::Mat _rmat;
     cv::Mat _tvec;
     bool _posUpdated;
     QImage _imgTex;
 };
-#endif // MODELRENDERING_H
+#endif // BASESCENEOBJECT_H

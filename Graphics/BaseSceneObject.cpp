@@ -1,29 +1,27 @@
-#include "ModelRendering.h"
+#include "BaseSceneObject.h"
 #include <QDir>
 
-ModelRendering::ModelRendering() {
+BaseSceneObject::BaseSceneObject() {
     _core = QSurfaceFormat::defaultFormat().profile() == QSurfaceFormat::CoreProfile;
 }
 
-void ModelRendering::initData() {
+void BaseSceneObject::initData() {
 
 }
 
-ModelRendering::~ModelRendering() {
+BaseSceneObject::~BaseSceneObject() {
     delete _model;
     delete _program;
 }
 
-void ModelRendering::init() {
+void BaseSceneObject::init() {
     this->initData();
     _program = new QOpenGLShaderProgram;
     _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + _shaderVertPath);
     _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + _shaderFragPath);
     this->bindAttributes();
     _program->link();
-
     _program->bind();
-    //_program->setUniformValue("texture", 0);
 
     _vao.create();
     QOpenGLVertexArrayObject::Binder vaoBinder(&_vao);
@@ -34,7 +32,7 @@ void ModelRendering::init() {
     _program->release();
 }
 
-void ModelRendering::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) {
+void BaseSceneObject::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) {
     vbo->bind();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     for (int i = 0; i < _attrName.size(); i++) {
@@ -46,7 +44,7 @@ void ModelRendering::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) 
     vbo->release();
 }
 
-void ModelRendering::render() {
+void BaseSceneObject::render() {
     QOpenGLVertexArrayObject::Binder vaoBinder(&_vao);
     this->bindAll();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
@@ -54,17 +52,17 @@ void ModelRendering::render() {
     this->releaseAll();
 }
 
-void ModelRendering::bindAll() {
+void BaseSceneObject::bindAll() {
     _program->bind();
     this->setUniformVariables();
     this->setupVertexAttribs(&_vbo, _model);
 }
 
-void ModelRendering::releaseAll() {
+void BaseSceneObject::releaseAll() {
     _program->release();
 }
 
-void BackgroundRendering::updateTexture(const QImage &image) {
+void BackgroundObject::updateTexture(const QImage &image) {
     if (_vao.isCreated()) {
         _vao.bind();
         if (_texture != nullptr) {
@@ -76,79 +74,86 @@ void BackgroundRendering::updateTexture(const QImage &image) {
     }
 }
 
-void BackgroundRendering::textureBind(QOpenGLTexture *texture) {
+void BackgroundObject::textureBind(QOpenGLTexture *texture) {
     if (texture != nullptr) {
         texture->bind();
     }
 }
 
-void BackgroundRendering::textureRelease(QOpenGLTexture *texture) {
+void BackgroundObject::textureRelease(QOpenGLTexture *texture) {
     if (texture != nullptr) {
         texture->release();
     }
 }
 
-void ModelRendering::bindAttributes() {
+void BaseSceneObject::bindAttributes() {
     for (int i = 0; i < _attrName.size(); i++)
         _program->bindAttributeLocation(_attrName[i], (GLuint)i);
 }
 
-void ModelRendering::setUniformVariables() {
+void BaseSceneObject::setUniformVariables() {
 
 }
 
-BackgroundRendering::BackgroundRendering() : ModelRendering::ModelRendering() {
+BackgroundObject::BackgroundObject() : BaseSceneObject::BaseSceneObject() {
     _texture = nullptr;
 }
 
-void BackgroundRendering::initData() {
+void BackgroundObject::initData() {
     _model = new Base3DModel("3D models/background.obj");
     _shaderVertPath = "/shaders/background.vert";
     _shaderFragPath = "/shaders/background.frag";
     _attrName << "vertex" << "v_uvs";
 }
 
-void BackgroundRendering::bindAll() {
-    ModelRendering::bindAll();
+void BackgroundObject::bindAll() {
+    BaseSceneObject::bindAll();
     this->textureBind(_texture);
 }
 
-void BackgroundRendering::releaseAll() {
+void BackgroundObject::releaseAll() {
     this->textureRelease(_texture);
-    ModelRendering::releaseAll();
+    BaseSceneObject::releaseAll();
 }
 
-BackgroundRendering::~BackgroundRendering() {
+BackgroundObject::~BackgroundObject() {
     if (_texture != nullptr) {
         _texture->destroy();
         delete _texture;
     }
 }
 
-HairRendering::HairRendering() : BackgroundRendering::BackgroundRendering() {
-
+TransformedObject::TransformedObject(TransformedObjectType type) : BackgroundObject::BackgroundObject() {
+    _type = type;
 }
 
-void HairRendering::initData() {
-    _model = new Base3DModel("3D models/hair/hair_v1.obj");
-    _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png").mirrored();
-    _shaderVertPath = "/shaders/hair.vert";
-    _shaderFragPath = "/shaders/hair.frag";
-    _attrName << "vertex" << "v_uvs";
+void TransformedObject::initData() {
+    if (_type == HAIR) {
+        _model = new Base3DModel("3D models/hair/hair_v1.obj");
+        _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png").mirrored();
+        _shaderVertPath = "/shaders/hair.vert";
+        _shaderFragPath = "/shaders/hair.frag";
+        _attrName << "vertex" << "v_uvs";
+    } else if (_type == HEAD) {
+        _model = new Base3DModel("3D models/head.obj");
+        _shaderVertPath = "/shaders/head.vert";
+        _shaderFragPath = "/shaders/head.frag";
+        _attrName << "vertex";
+    }
     _posUpdated = false;
 }
 
-HairRendering::~HairRendering() {
+TransformedObject::~TransformedObject() {
 
 }
 
-void HairRendering::updatePosition(cv::Mat &rmat, cv::Mat &tvec) {
+void TransformedObject::updatePosition(cv::Mat &rmat, cv::Mat &tvec) {
     _rmat = rmat;
     _tvec = tvec;
     _posUpdated = true;
 }
 
-void HairRendering::setUniformVariables() {
+void TransformedObject::setUniformVariables() {
     if (_posUpdated) {
         QMatrix4x4 mvp = calcMVP();
         _program->setUniformValue("mvp", mvp);
@@ -156,12 +161,13 @@ void HairRendering::setUniformVariables() {
     }
 }
 
-void HairRendering::init() {
-    ModelRendering::init();
-    this->updateTexture(_imgTex);
+void TransformedObject::init() {
+    BaseSceneObject::init();
+    if (_type == HAIR)
+        this->updateTexture(_imgTex);
 }
 
-QMatrix4x4 HairRendering::calcMVP() {
+QMatrix4x4 TransformedObject::calcMVP() {
     double rot[9] = { 0 };
     double tv[3] = { 0 };
     for (int i = 0; i < 3; i++) {
@@ -185,7 +191,7 @@ QMatrix4x4 HairRendering::calcMVP() {
     return res;
 }
 
-void HairRendering::updateProjectionMatrix(GLfloat aspect) {
+void TransformedObject::updateProjectionMatrix(GLfloat aspect) {
     _projection.setToIdentity();
     _projection.perspective(45.f, aspect, 0.1f, 100.0f);
 }

@@ -8,7 +8,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QImage>
 #include <QOpenGLTexture>
-#include <Graphics/ModelRendering.h>
+#include <Graphics/BaseSceneObject.h>
 #include <Graphics/Base3DModel.h>
 #include <opencv2/opencv.hpp>
 
@@ -27,8 +27,9 @@ public slots:
     void cleanup();
 private:
     static bool _transparent;
-    BackgroundRendering *_background;
-    HairRendering *_hair;
+    BackgroundObject *_background;
+    TransformedObject *_hair;
+    TransformedObject *_head;
 };
 
 #endif // GLWIDGET_H
