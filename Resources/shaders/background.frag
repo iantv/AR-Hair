@@ -1,4 +1,4 @@
-varying vec2 f_uvs;
+varying highp vec2 f_uvs;
 uniform sampler2D texture;
 
 void main() {

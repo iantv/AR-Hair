@@ -17,8 +17,8 @@ BaseSceneObject::~BaseSceneObject() {
 void BaseSceneObject::init() {
     this->initData();
     _program = new QOpenGLShaderProgram;
-    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, QDir::currentPath() + _shaderVertPath);
-    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, QDir::currentPath() + _shaderFragPath);
+    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, _shaderVertPath);
+    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, _shaderFragPath);
     this->bindAttributes();
     _program->link();
     _program->bind();
@@ -101,8 +101,8 @@ BackgroundObject::BackgroundObject() : BaseSceneObject::BaseSceneObject() {
 
 void BackgroundObject::initData() {
     _model = new Base3DModel("3D models/background.obj");
-    _shaderVertPath = "/shaders/background.vert";
-    _shaderFragPath = "/shaders/background.frag";
+    _shaderVertPath = ":/Shaders/bg.vert";
+    _shaderFragPath = ":/Shaders/bg.frag";
     _attrName << "vertex" << "v_uvs";
 }
 
@@ -130,14 +130,14 @@ TransformedObject::TransformedObject(TransformedObjectType type) : BackgroundObj
 void TransformedObject::initData() {
     if (_type == HAIR) {
         _model = new Base3DModel("3D models/hair/hair_v1.obj");
-        _imgTex = QImage(QDir::currentPath() + "/3D models/hair/hair_texture_v1.png").mirrored();
-        _shaderVertPath = "/shaders/hair.vert";
-        _shaderFragPath = "/shaders/hair.frag";
+        _imgTex = QImage(":/Hairstyles/1.tex").mirrored();
+        _shaderVertPath = ":/Shaders/hair.vert";
+        _shaderFragPath = ":/Shaders/hair.frag";
         _attrName << "vertex" << "v_uvs";
     } else if (_type == HEAD) {
         _model = new Base3DModel("3D models/head.obj");
-        _shaderVertPath = "/shaders/head.vert";
-        _shaderFragPath = "/shaders/head.frag";
+        _shaderVertPath = ":/Shaders/head.vert";
+        _shaderFragPath = ":/Shaders/head.frag";
         _attrName << "vertex";
     }
     _posUpdated = false;

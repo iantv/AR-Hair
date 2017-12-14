@@ -91,3 +91,6 @@ LIBS += -LC:\Dlib\dlib-19.6\buildx64 \
 -lopencv_ximgproc320 \
 -lopencv_xobjdetect320 \
 -lopencv_xphoto320
+
+RESOURCES += \
+    application.qrc

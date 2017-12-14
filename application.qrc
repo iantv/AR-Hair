@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/Hairstyles">
+        <file alias="1.tex">Resources/3D models/hair/hair_texture_v1.png</file>
+        <file alias="1.obj">Resources/3D models/hair/hair_v1.obj</file>
+    </qresource>
+    <qresource prefix="/Shaders">
+        <file alias="bg.frag">Resources/shaders/background.frag</file>
+        <file alias="bg.vert">Resources/shaders/background.vert</file>
+        <file alias="hair.frag">Resources/shaders/hair.frag</file>
+        <file alias="hair.vert">Resources/shaders/hair.vert</file>
+        <file alias="head.frag">Resources/shaders/head.frag</file>
+        <file alias="head.vert">Resources/shaders/head.vert</file>
+    </qresource>
+</RCC>
