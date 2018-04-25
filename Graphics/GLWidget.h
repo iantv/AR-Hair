@@ -11,6 +11,7 @@
 #include <Graphics/BaseSceneObject.h>
 #include <Graphics/Base3DModel.h>
 #include <opencv2/opencv.hpp>
+#include <QPushButton>
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -30,6 +31,7 @@ private:
     BackgroundObject *_background;
     TransformedObject *_hair;
     TransformedObject *_head;
+    QPushButton *_btn;
 };
 
 #endif // GLWIDGET_H
