@@ -31,7 +31,6 @@ private:
     BackgroundObject *_background;
     TransformedObject *_hair;
     TransformedObject *_head;
-    QPushButton *_btn;
 };
 
 #endif // GLWIDGET_H

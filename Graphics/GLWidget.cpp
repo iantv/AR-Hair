@@ -9,7 +9,6 @@ GLWidget::GLWidget(QWidget *parent) :
     _background = new BackgroundObject();
     _hair = new TransformedObject(HAIR);
     _head = new TransformedObject(HEAD);
-    _btn = new QPushButton(this);
     if (_transparent) {
         QSurfaceFormat fmt = format();
         fmt.setAlphaBufferSize(8);
