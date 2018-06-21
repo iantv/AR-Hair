@@ -227,8 +227,6 @@ void TransformedObject::decIdx() {
 
 void TransformedObject::updateHairData() {
     delete _model;
-    qDebug() << QString(HAIR_OBJ).arg(_idx).toStdString().c_str();
-    qDebug() << QString(HAIR_TEX).arg(_idx).toStdString().c_str();
     _model = new Base3DModel(QString(HAIR_OBJ).arg(_idx).toStdString().c_str());
     _imgTex = QImage(QString(HAIR_TEX).arg(_idx).toStdString().c_str()).mirrored();
     this->updateTexture(_imgTex);
