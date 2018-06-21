@@ -12,12 +12,16 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 
+#define HAIR_OBJ "3D models/hair/Hair_v%1.obj"
+#define HAIR_TEX "3D models/hair/HairTex_v%1.png"
+
 class BaseSceneObject
 {
 public:
     BaseSceneObject();
     virtual ~BaseSceneObject();
     virtual void init();
+    virtual void reinit();
     void render();
 protected:
     virtual void bindAll();
@@ -58,16 +62,21 @@ enum TransformedObjectType {
 class TransformedObject : public BackgroundObject
 {
 public:
-    TransformedObject(TransformedObjectType type);
+    TransformedObject(TransformedObjectType type, unsigned int idx = 0);
     ~TransformedObject();
     void updatePosition(cv::Mat &rmat, cv::Mat &tvec);
     void init() override;
-    void updateProjectionMatrix(GLfloat aspect);
+    void reinit() override;
+    void updateProjectionMatrix();
+    void incIdx();
+    void decIdx();
+    void updateHairData();
 protected:
     void setUniformVariables() override;
     QMatrix4x4 calcMVP();
     void initData() override;
 private:
+    unsigned int _idx;
     TransformedObjectType _type;
     QMatrix4x4 _projection;
     cv::Mat _rmat;

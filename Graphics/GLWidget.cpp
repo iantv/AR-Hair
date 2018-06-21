@@ -1,14 +1,17 @@
 #include "GLWidget.h"
 #include <QPainter>
 #include <QResizeEvent>
+#include <QGraphicsDropShadowEffect>
 
 bool GLWidget::_transparent = false;
 
 GLWidget::GLWidget(QWidget *parent) :
     QOpenGLWidget(parent) {
     _background = new BackgroundObject();
-    _hair = new TransformedObject(HAIR);
+    _hair = new TransformedObject(HAIR, 1);
     _head = new TransformedObject(HEAD);
+    _renderHair = true;
+
     if (_transparent) {
         QSurfaceFormat fmt = format();
         fmt.setAlphaBufferSize(8);
@@ -25,7 +28,6 @@ GLWidget::~GLWidget() {
 void GLWidget::initializeGL() {
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::cleanup);
     initializeOpenGLFunctions();
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
@@ -46,7 +48,8 @@ void GLWidget::paintGL() {
     f->glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     _head->render();
     f->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    _hair->render();
+    if (_renderHair)
+        _hair->render();
 }
 
 void GLWidget::resizeGL(int width, int height) {
@@ -66,4 +69,18 @@ void GLWidget::updatePosition(cv::Mat &rmat, cv::Mat &tvec) {
 
 void GLWidget::cleanup() {
     GLWidget::~GLWidget();
+}
+
+void GLWidget::nextHair() {
+    _renderHair = false;
+    _hair->incIdx();
+    _hair->reinit();
+    _renderHair = true;
+}
+
+void GLWidget::prevHair() {
+    _renderHair = false;
+    _hair->decIdx();
+    _hair->reinit();
+    _renderHair = true;
 }

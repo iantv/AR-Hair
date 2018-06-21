@@ -20,6 +20,8 @@ public:
     ~GLWidget();
     void updateBackgroundImage(const QImage &image);
     void updatePosition(cv::Mat &rmat, cv::Mat &tvec);
+    void nextHair();
+    void prevHair();
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -28,6 +30,7 @@ public slots:
     void cleanup();
 private:
     static bool _transparent;
+    bool _renderHair;
     BackgroundObject *_background;
     TransformedObject *_hair;
     TransformedObject *_head;

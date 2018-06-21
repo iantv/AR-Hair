@@ -32,6 +32,17 @@ void BaseSceneObject::init() {
     _program->release();
 }
 
+void BaseSceneObject::reinit() {
+    _program->bind();
+    _vbo.destroy();
+    _vbo.create();
+    _vbo.bind();
+    _vbo.allocate(_model->data(), _model->sizeData() * sizeof(GLfloat));
+    this->setupVertexAttribs(&_vbo, _model);
+    _program->release();
+
+}
+
 void BaseSceneObject::setupVertexAttribs(QOpenGLBuffer *vbo, Base3DModel *model) {
     vbo->bind();
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
@@ -123,14 +134,17 @@ BackgroundObject::~BackgroundObject() {
     }
 }
 
-TransformedObject::TransformedObject(TransformedObjectType type) : BackgroundObject::BackgroundObject() {
+TransformedObject::TransformedObject(TransformedObjectType type, unsigned int idx) : BackgroundObject::BackgroundObject() {
     _type = type;
+    _idx = idx;
 }
 
 void TransformedObject::initData() {
     if (_type == HAIR) {
-        _model = new Base3DModel("3D models/hair/hair_v1.obj");
-        _imgTex = QImage(":/Hairstyles/1.tex").mirrored();
+        _model = new Base3DModel(QString(HAIR_OBJ).arg(QString::number(_idx)).toStdString().c_str());
+        //_imgTex = QImage(":/Hairstyles/1.tex").mirrored();
+        _imgTex = QImage(QString(HAIR_TEX).arg(QString::number(_idx).toStdString().c_str())).mirrored();
+
         _shaderVertPath = ":/Shaders/hair.vert";
         _shaderFragPath = ":/Shaders/hair.frag";
         _attrName << "vertex" << "v_uvs";
@@ -167,6 +181,11 @@ void TransformedObject::init() {
         this->updateTexture(_imgTex);
 }
 
+void TransformedObject::reinit() {
+    this->updateHairData();
+    BaseSceneObject::reinit();
+}
+
 QMatrix4x4 TransformedObject::calcMVP() {
     double rot[9] = { 0 };
     double tv[3] = { 0 };
@@ -179,6 +198,7 @@ QMatrix4x4 TransformedObject::calcMVP() {
     for (int i = 0; i < 3; i++) {
         tv[i] = -_tvec.at<double>(i);
     }
+
     QMatrix4x4 view(
         rot[0], rot[1], rot[2], tv[0],
         rot[3], rot[4], rot[5], tv[1],
@@ -186,12 +206,30 @@ QMatrix4x4 TransformedObject::calcMVP() {
         0.f, 0.f, 0.f, 1.f
     );
     QMatrix4x4 model; model.setToIdentity();
-    this->updateProjectionMatrix(4.0f / 3.0f);
+    this->updateProjectionMatrix();
     QMatrix4x4 res = _projection * view * model;
     return res;
 }
 
-void TransformedObject::updateProjectionMatrix(GLfloat aspect) {
+void TransformedObject::updateProjectionMatrix() {
     _projection.setToIdentity();
-    _projection.perspective(45.f, aspect, 0.1f, 100.0f);
+    //_projection.ortho(0.f, 640.f, 0.f, 480.f, 1.f, -1.f);
+    _projection.perspective(45.f, 4.0f / 3.0f, 0.1f, 100.f);
+}
+
+void TransformedObject::incIdx() {
+    _idx = MIN(_idx + 1, 13);
+}
+
+void TransformedObject::decIdx() {
+    _idx = MAX(_idx - 1, 1);
+}
+
+void TransformedObject::updateHairData() {
+    delete _model;
+    qDebug() << QString(HAIR_OBJ).arg(_idx).toStdString().c_str();
+    qDebug() << QString(HAIR_TEX).arg(_idx).toStdString().c_str();
+    _model = new Base3DModel(QString(HAIR_OBJ).arg(_idx).toStdString().c_str());
+    _imgTex = QImage(QString(HAIR_TEX).arg(_idx).toStdString().c_str()).mirrored();
+    this->updateTexture(_imgTex);
 }

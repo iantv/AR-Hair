@@ -13,6 +13,9 @@ Base3DModel::Base3DModel(const char *fpath) : Base3DModel::Base3DModel() {
 }
 
 Base3DModel::~Base3DModel() {
+    _indx.clear();
+    _size.clear();
+    _data.clear();
 }
 
 const GLfloat *Base3DModel::data() {
