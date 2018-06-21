@@ -52,11 +52,6 @@ void GLWidget::paintGL() {
         _hair->render();
 }
 
-void GLWidget::resizeGL(int width, int height) {
-    _hair->updateProjectionMatrix(GLfloat(width) / height);
-    _head->updateProjectionMatrix(GLfloat(width) / height);
-}
-
 void GLWidget::updateBackgroundImage(const QImage &image) {
     _background->updateTexture(image);
     this->update();
