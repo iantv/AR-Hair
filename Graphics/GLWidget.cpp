@@ -28,6 +28,7 @@ GLWidget::~GLWidget() {
 void GLWidget::initializeGL() {
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::cleanup);
     initializeOpenGLFunctions();
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
@@ -48,8 +49,13 @@ void GLWidget::paintGL() {
     f->glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     _head->render();
     f->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    if (_renderHair)
+
+    if (_renderHair) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
         _hair->render();
+        glDisable(GL_CULL_FACE);
+    }
 }
 
 void GLWidget::updateBackgroundImage(const QImage &image) {
