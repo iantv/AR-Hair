@@ -64,6 +64,6 @@ void FaceDetector::renderFace(cv::Mat &image, dlib::full_object_detection &shape
         "\n\t Invalid inputs were given to this function. "
         << "\n\t d.num_parts():  " << shape.num_parts());
     for (int i = 0; i < _keyPoints.size(); i++) {
-        cv::circle(image, cv::Point(shape.part(_keyPoints[i]).x(), shape.part(_keyPoints[i]).y()), 3, cv::Scalar(255, 0, 0), -1);
+        cv::circle(image, cv::Point(shape.part(_keyPoints[i]).x(), shape.part(_keyPoints[i]).y()), 3, cv::Scalar(0, 0, 255), -1);
     }
 }
