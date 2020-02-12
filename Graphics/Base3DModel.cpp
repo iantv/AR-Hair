@@ -1,6 +1,8 @@
 #include "Base3DModel.h"
 #include <QDebug>
+#include <QVector>
 
+#define _CRT_SECURE_NO_WARNINGS
 #define uint unsigned int
 
 Base3DModel::Base3DModel() : _count(0) {
@@ -36,36 +38,38 @@ bool Base3DModel::loadModelFromFile(const char *fpath) {
     QVector<vec2> tuv;
     QVector<vec3> tn;
 
-    FILE *file = fopen(fpath, "r");
+    errno_t err;
+    FILE *file;
+    err = fopen_s(&file, fpath, "r");
     if (file == NULL) {
         printf("Impossible to open the file !\n");
         return false;
     }
-    printf("%s opened\n", fpath);
+    printf("%s opening\n", fpath);
     while (true) {
         char lineHeader[128];
-        int res = fscanf(file, "%s", lineHeader);
+        int res = fscanf_s(file, "%s", lineHeader);
         if (res == EOF) break;
         if (strcmp(lineHeader, "o") == 0) {
             char object[128];
-            fscanf(file, "%s", object);
+            fscanf_s(file, "%s", object);
         } else if (strcmp(lineHeader, "v") == 0) {
             vec3 vertex;
-            fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+            fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
             tv << vertex;
         } else if (strcmp(lineHeader, "vt") == 0) {
             vec2 uv;
-            fscanf(file, "%f %f\n", &uv.x, &uv.y);
+            fscanf_s(file, "%f %f\n", &uv.x, &uv.y);
             tuv << uv;
         } else if (strcmp(lineHeader, "vn") == 0) {
             vec3 normal;
-            fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+            fscanf_s(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
             tn << normal;
         } else if (strcmp(lineHeader, "f") == 0) {
-            this->parseFacet(file, &vIdx, &uvIdx, &nIdx);
+            this->parseFacet(file, vIdx, uvIdx, nIdx);
         } else if (strcmp(lineHeader, "s") == 0) { // Just skip line started by 's' symbol
             char str[128];
-            fscanf(file, "%s", str);
+            fscanf_s(file, "%s", str);
             if (strcmp(str, "off") == 0) {
                 // ...
             } else {
@@ -73,6 +77,9 @@ bool Base3DModel::loadModelFromFile(const char *fpath) {
             }
         } else if (lineHeader[0] == '#') {
             this->skipComments(file, lineHeader);
+        } else if (strcmp(lineHeader, "usemtl") == 0) {
+            char str[128];
+            fscanf_s(file, "%s", str);
         } else {
             printf("Unknown: %s", lineHeader);
         }
@@ -90,42 +97,35 @@ void Base3DModel::skipComments(FILE *file, char *lineHeader) {
         char sym = '#';
         int t = 1;
         while ((sym != '\n') && (sym != EOF) && (t == 1)) {
-            t = fscanf(file, "%c", &sym);
+            t = fscanf_s(file, "%c", &sym);
         }
     }
 }
 
-void Base3DModel::parseFacet(FILE *file, QVector<uint> *vInd, QVector<uint> *uvInd, QVector<uint> *nInd) {
+void Base3DModel::parseFacet(FILE *file, QVector<uint> &vInd, QVector<uint> &uvInd, QVector<uint> &nInd) {
     char str[128];
-    unsigned int tvIdx[3] = { 0 }, tuvIdx[3] = { 0 }, tnIdx[3] = { 0 };
-    bool vt = false, vn = false;
-    for (int i = 0; i < 3; i++) {
-        fscanf(file, "%s", str);
-        for (int i = 0; i < strlen(str); i++) {
-            if (str[i] == '\0') break;
-            if (str[i] == '/') {
-                if (str[i + 1] == '/') {
-                    vn = true;
-                    break;
-                } else {
-                    if (vt == true) {
-                        vn = true;
-                        break;
-                    } else {
-                        vt = true;
-                    }
-                }
-            }
+    fgets(str, 128, file);
+    for (char *t = str;*t >= ' ';) {
+        ++t;
+        QVector<uint> triple(3, 0);
+        for (int i = 0; i < 3; ++i) {
+            char *p = t;
+            for (; isdigit(*p); ++p) {}
+            if (p > t)
+                triple[i] = atoi(t);
+            t = p;
+            if (*t == '/') ++t; else break;
         }
-        if (vt == false && vn == false) sscanf(str, "%d", &tvIdx[i]);
-        else if (vt == false && vn == true) sscanf(str, "%d//%d", &tvIdx[i], &tnIdx[i]);
-        else if (vt == true && vn == false) sscanf(str, "%d/%d", &tvIdx[i], &tuvIdx[i]);
-        else sscanf(str, "%d/%d/%d", &tvIdx[i], &tuvIdx[i], &tnIdx[i]);
+        //printf("%d %d %d\n", triple[0], triple[1], triple[2]);
+        vInd << triple[0];
+        uvInd << triple[1];
+        nInd << triple[2];
     }
-    for (int i = 0; i < 3; i++) {
-        *vInd << tvIdx[i];
-        if (vt) *uvInd << tuvIdx[i];
-        if (vn) *nInd << tnIdx[i];
+
+    if (vInd.size() == 4) {
+        vInd << vInd[0] << vInd[2];
+        uvInd << uvInd[0] << uvInd[2];
+        nInd << nInd[0] << nInd[2];
     }
 }
 

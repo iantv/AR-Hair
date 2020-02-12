@@ -32,7 +32,7 @@ public:
     QVector <GLint> _size;
 private:
     bool loadModelFromFile(const char *fpath);
-    void parseFacet(FILE *file, QVector<uint> *vInd, QVector<uint> *uvInd, QVector<uint> *nInd);
+    void parseFacet(FILE *file, QVector<uint> &vInd, QVector<uint> &uvInd, QVector<uint> &nInd);
     void skipComments(FILE *file, char *lineHeader);
     void setAttribs(GLint size);
     void setAttribsAndFillData(bool vecIsEmpty, bool isFirstIter, GLint sizeAttr, void *tdata, unsigned int indx);
