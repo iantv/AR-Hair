@@ -30,7 +30,7 @@ void VideoPlayer::run() {
     cv::Mat frame;
     while(_capture.read(frame)) {
         cv::Mat rgbFrame;
-        cv::cvtColor(frame, rgbFrame, CV_BGR2RGB);
+        cv::cvtColor(frame, rgbFrame, cv::COLOR_BGR2RGB);
         this->poseEstimate(frame.channels() == 3 ? rgbFrame : frame,
                            frame.channels() == 3 ? QImage::Format_RGB888 : QImage::Format_Indexed8);
         emit this->processedImage(_image, _poseEstimator->getRotationMatrix(), _poseEstimator->getTranslationVector());
