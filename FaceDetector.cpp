@@ -51,7 +51,7 @@ void FaceDetector::find2DKeyPoints(cv::Mat &image, std::vector<cv::Point2d> &poi
         dlib::full_object_detection shape = _poseModel(cimg, r);
         shapes.push_back(shape);
         this->renderFace(image, shape);
-        for (int i = 0; i < _keyPoints.size(); i++) {
+        for (int i = 0; i < (int)_keyPoints.size(); i++) {
             points.push_back(cv::Point2d(shape.part(_keyPoints[i]).x(), shape.part(_keyPoints[i]).y()));
         }
         break;
@@ -63,7 +63,7 @@ void FaceDetector::renderFace(cv::Mat &image, dlib::full_object_detection &shape
         shape.num_parts() == 68,
         "\n\t Invalid inputs were given to this function. "
         << "\n\t d.num_parts():  " << shape.num_parts());
-    for (int i = 0; i < _keyPoints.size(); i++) {
+    for (int i = 0; i < (int)_keyPoints.size(); i++) {
         cv::circle(image, cv::Point(shape.part(_keyPoints[i]).x(), shape.part(_keyPoints[i]).y()), 3, cv::Scalar(0, 0, 255), -1);
     }
 }
